@@ -105,7 +105,7 @@
 				pageLength: 25,
 				dom: 'Bfrtip',
 				buttons: [
-					'pageLength', 'csv', 'excel', 'pdf', 'print'
+					'pageLength', 'excel'//, 'csv', 'excel', 'pdf', 'print'
 				],
 				fixedHeader: true,
 				"columns":[

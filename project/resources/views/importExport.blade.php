@@ -39,45 +39,46 @@
 		</div>
 	</div>
 	<hr>	
-
-	<table id="example" class="display table table-striped table-bordered" width="100%" cellspacing="0">
-        <thead>
-            <tr>
-				<th>Date</th>
-				<th>Name</th>
-				<th>Department</th>
-				<th>Office In</th>
-				<th>Office Out</th>
-				<th>Attendance</th>
-				<th>Total Time</th>
-				<th>Worked Time</th>
-				<th>Total Break Time</th>
-				<th>Thumb</th>
-				<th>Note</th>
- 				<th>Breaks</th>
-				{{--<th>LE</th>
-				<th>OT</th>--}}
-            </tr>
-        </thead>
-        <tfoot>
-			<tr>
-				<th>Date</th>
-				<th>Name</th>
-				<th>Department</th>
-				<th>Office In</th>
-				<th>Office Out</th>
-				<th>Attendance</th>
-				<th>Total Time</th>
-				<th>Worked Time</th>
- 				<th>Total Break Time</th>
-				<th>Thumb</th>
-				<th>Note</th>
- 				<th>Breaks</th>
-				{{--<th>LE</th>
-				<th>OT</th>--}}
-			</tr>
-        </tfoot>
-    </table>
+	<div class="table-responsive">
+		<table id="example" class="table table-striped table-bordered small" width="100%" cellspacing="0">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Name</th>
+					<th>Department</th>
+					<th>Office In</th>
+					<th>Office Out</th>
+					<th>Attendance</th>
+					<th>Total Time</th>
+					<th>Worked Time</th>
+					<th>Total Break Time</th>
+					<th>Thumb</th>
+					<th>Note</th>
+					<th>Breaks</th>
+					{{--<th>LE</th>
+					<th>OT</th>--}}
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>Date</th>
+					<th>Name</th>
+					<th>Department</th>
+					<th>Office In</th>
+					<th>Office Out</th>
+					<th>Attendance</th>
+					<th>Total Time</th>
+					<th>Worked Time</th>
+					<th>Total Break Time</th>
+					<th>Thumb</th>
+					<th>Note</th>
+					<th>Breaks</th>
+					{{--<th>LE</th>
+					<th>OT</th>--}}
+				</tr>
+			</tfoot>
+		</table>
+	</div>
 
 @endsection
 
@@ -201,7 +202,7 @@
 											'<td>'+(breakData[2] == undefined ? "" :  breakData[2])+'</td>'+
 										'</tr>';
 							});
-							return breakLenght > 0 ? '<center><button type="button" class="btn btn-info btn-Xs" data-toggle="collapse" data-target="#demo'+row.id+'">Breaks Details</button>'+
+							return breakLenght > 0 ? '<center><button type="button" class="btn btn-warning btn-xs" data-toggle="collapse" data-target="#demo'+row.id+'">Breaks Details</button>'+
 									'<div class="collapse" id="demo'+row.id+'" ><table class="table small" style="margin-bottom:0px">'+
 										'<tr>'+
 											'<th>Out</th>'+

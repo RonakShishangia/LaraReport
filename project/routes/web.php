@@ -26,3 +26,6 @@ Route::get('attendanceData', 'AttendanceReportController@getAttendanceReport')->
 Route::get('inout', function () {
     return view('inout');
 });
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

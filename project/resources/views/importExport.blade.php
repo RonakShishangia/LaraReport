@@ -54,9 +54,9 @@
 					<th>Total Break Time</th>
 					<th>Thumb</th>
 					<th>Note</th>
+					<th>LE</th>
 					<th>Breaks</th>
-					{{--<th>LE</th>
-					<th>OT</th>--}}
+					{{--<th>OT</th>--}}
 				</tr>
 			</thead>
 			<tfoot>
@@ -72,9 +72,9 @@
 					<th>Total Break Time</th>
 					<th>Thumb</th>
 					<th>Note</th>
+					<th>LE</th>
 					<th>Breaks</th>
-					{{--<th>LE</th>
-					<th>OT</th>--}}
+					{{--<th>OT</th>--}}
 				</tr>
 			</tfoot>
 		</table>
@@ -103,7 +103,7 @@
 		$(document).ready(function() {
 			table=$('#example').DataTable({
 				data: <?php echo $data; ?> ,
-				pageLength: 25,
+				pageLength: 30,
 				dom: 'Bfrtip',
 				buttons: [
 					'pageLength', 'excel'//, 'csv', 'excel', 'pdf', 'print'
@@ -189,6 +189,19 @@
 							}
 						}
 					},
+					{ data: "LE", name: "LE", 
+						render:function (data, type, row) {
+							if(data == "00:00:00"){
+								return "<center>-</center>";
+							}else{
+								if(data.length > 8) {
+									return "<center style='color:green;'>"+ data +"</center>";
+								}else{
+									return "<center style='color:red;'>"+ data +"</center>";
+								}
+							}
+						}
+					},
 					{ data: "breaks", name: "breaks", 
 						render:function (data, type, row) {
 							var d = JSON.parse(row.breaks);
@@ -212,9 +225,8 @@
 										+tds+
 								'</table></div></center>' : "<center>-</center>" ;
 						}
-					}/*,
-					{ data: "LE", name: "LE" },
-					{ data: "OT", name: "OT" }*/
+					},
+					/*{ data: "OT", name: "OT" }*/
 				],
 				"order": [[ 2, "asc" ]],
 				drawCallback: function (settings) {
@@ -225,7 +237,7 @@
 					api.column(2, { page: 'current' }).data().each(function (group, i) {
 						if(last !== group){
 							$(rows).eq(i).before(
-								'<tr class="group"><td colspan="12" style="BACKGROUND-COLOR:lightgray;font-weight:700;color:#00000;" role="row">' + group  + '</td></tr>'
+								'<tr class="group"><td colspan="13" style="BACKGROUND-COLOR:lightgray;font-weight:700;color:#00000;" role="row">' + group  + '</td></tr>'
 							);
 							last = group;
 						}

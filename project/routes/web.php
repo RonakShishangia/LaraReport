@@ -14,11 +14,13 @@
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
 Route::get('/', 'AttendanceReportController@importExport');
 
 Route::get('importExport', 'AttendanceReportController@importExport');
 Route::get('downloadExcel/{type}', 'AttendanceReportController@downloadExcel');
 Route::post('importExcel', 'AttendanceReportController@importExcel');
+
 // get all attendance data
 Route::get('attendanceData', 'AttendanceReportController@getAttendanceReport')->name('allAttendaceData');
 
@@ -29,3 +31,5 @@ Route::get('inout', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+

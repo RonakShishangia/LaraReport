@@ -5,7 +5,7 @@
 	<link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/responsive.bootstrap.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/fixedHeader.bootstrap.min.css')}}" >
-	<link rel="stylesheet" href="{{ asset('css/toastr.css')}}" >	
+		
 @endsection
 
 @section('content')
@@ -97,7 +97,7 @@
 	<script src="{{ asset('js/vfs_fonts.js') }}"></script>
 	<script src="{{ asset('js/jszip.min.js') }}"></script>
 	<script src="{{ asset('js/buttons.flash.min.js') }}"></script>
-	<script src="{{ asset('js/toastr.min.js') }}"></script>
+	
 	<script>
 		var table='';
 		$(document).ready(function() {
@@ -183,9 +183,16 @@
 					{ data: "note", name: "note", 
 						render:function (data, type, row) {
 							if(data == null){
-								return "<center>-</center>";
+								var notes = "";
+								if(row.note == null){
+									notes = "";
+								}else{
+									notes = row.note;
+								}
+								//return "<center>-</center>";
+								return '<center>'+notes+' <button type="button" class="btn btn-link btn-xs" data-toggle="modal" data-target=".modal" onclick="addNotes('+row.id+',\''+row.name+'\', \''+row.note+'\')">add note</button></center>';
 							}else{
-								return "<center>"+ data +"</center>";
+								return '<center>'+ data + '<button type="button" class="btn btn-link btn-xs" data-toggle="modal" data-target=".modal" onclick="addNotes('+row.id+',\''+row.name+'\', \''+row.note+'\')">add note</button></center>';
 							}
 						}
 					},
@@ -296,30 +303,14 @@
 			// table.draw();
 		}
 
-		toastr.options = {
-			"closeButton": false,
-			"newestOnTop": false,
-			"positionClass": "toast-top-right",
-			"timeOut": "8000",
-			"showEasing": "swing",
-			"hideEasing": "linear",
-			"showMethod": "fadeIn",
-			"hideMethod": "fadeOut"
+		// Exicute whene click on note field
+		function addNotes(userId, userName, userNote){
+			$("#userData").text(userName);
+			$("#userId").val(userId);
+			$("#adduserNote").val(userNote == "null" ? "" : userNote);	
+			setDate();
+			table.draw();		
 		}
-		/**
-		 * Toster notification settings
-		 */
-		@if(Session::has('success'))
-			toastr.success("{{ Session::get('success') }}");
-		@endif
-		@if(Session::has('info'))
-			oastr.info("{{ Session::get('info') }}");
-		@endif
-		@if(Session::has('warning'))
-			toastr.warning("{{ Session::get('warning') }}");
-		@endif
-		@if(Session::has('error'))
-			toastr.error("{{ Session::get('error') }}");
-		@endif 
+
 	</script>
 @endsection

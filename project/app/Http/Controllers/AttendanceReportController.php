@@ -260,4 +260,21 @@ class AttendanceReportController extends Controller
         //     'data' => $data
         // ]);
     }
+
+    /**
+     * add note to into the  employee
+     */
+    public function addnote(Request $request){
+        try{
+            $data = AttendanceReport::find($request->userId);
+            $data->note = $request->adduserNote;
+            $data->save();
+            session()->flash('success','NOTE added successfully');
+            return redirect('/');
+        }catch(\Exception $ex){
+            session()->flash('error','Error while entering NOTE');
+            return redirect('/');
+        }
+
+    }
 }

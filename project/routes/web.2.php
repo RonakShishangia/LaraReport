@@ -21,9 +21,10 @@ Route::get('importExport', 'AttendanceReportController@importExport');
 Route::get('downloadExcel/{type}', 'AttendanceReportController@downloadExcel');
 Route::post('importExcel', 'AttendanceReportController@importExcel');
 
-// add note to employee
-Route::post('addnote', 'AttendanceReportController@addnote')->name('addnote');
-
+//Route::post('addnote', 'AttendanceReportController@addnote')->name('addnote');
+Route::post('addnote', function () {
+    echo "Ronak";//return view('inout');
+});
 // get all attendance data
 Route::get('attendanceData', 'AttendanceReportController@getAttendanceReport')->name('allAttendaceData');
 

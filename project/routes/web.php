@@ -27,6 +27,10 @@ Route::post('addnote', 'AttendanceReportController@addnote')->name('addnote');
 // get all attendance data
 Route::get('attendanceData', 'AttendanceReportController@getAttendanceReport')->name('allAttendaceData');
 
+Route::get('searchEmp', 'AttendanceReportController@searchemp')->name('searchemp');
+
+Route::post('report', 'AttendanceReportController@getEmpReport')->name('report');
+
 /* In out entry */
 Route::get('inout', function () {
     return view('inout');

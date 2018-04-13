@@ -5,7 +5,6 @@
 	<link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/responsive.bootstrap.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/fixedHeader.bootstrap.min.css')}}" >
-		
 @endsection
 
 @section('content')
@@ -308,8 +307,8 @@
 			$("#userData").text(userName);
 			$("#userId").val(userId);
 			$("#adduserNote").val(userNote == "null" ? "" : userNote);	
-			setDate();
-			table.draw();		
+			// setDate();
+			// table.draw();		
 		}
 
 	</script>

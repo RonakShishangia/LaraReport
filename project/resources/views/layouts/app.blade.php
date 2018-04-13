@@ -13,6 +13,9 @@
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#">Import - CSV </a>
 			</div>
+			<ul class="nav navbar-nav">
+				<li class=""><a href="{{route('searchemp')}}">Report</a></li>
+			</ul>
 		</div>
 	</nav>
 	<div class="container-fluid">

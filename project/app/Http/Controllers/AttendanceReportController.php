@@ -261,6 +261,29 @@ class AttendanceReportController extends Controller
         // ]);
     }
 
+    public function searchemp(){
+        $employees = AttendanceReport::select('name')->groupBy('name')->get();
+        $empDatas = "";
+        return view('report', compact('employees', 'empDatas'));
+    }
+
+    // get selected employee
+    public function getEmpReport(Request $request) {
+        $sum = "";
+        $employees = AttendanceReport::select('name')->groupBy('name')->get();
+        $empDatas = AttendanceReport::where('name', $request->employee)
+                                    ->where('LE', 'like',  "-%")
+                                    ->whereBetween('date', [$request->startDate, $request->endDate])
+                                    ->get();
+        foreach($empDatas as $empData){
+            $sum1 = str_replace('-', '', $empData->LE);
+            $sum += strtotime($sum1);
+        }
+        dd(date('h:i:s', $sum));
+        $s = $sum;//date('h:i:s',  strtotime($sum));
+        return view('report', compact('employees', 'empDatas', 'sum'));
+    }
+
     /**
      * add note to into the  employee
      */

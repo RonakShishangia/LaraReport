@@ -263,25 +263,39 @@ class AttendanceReportController extends Controller
 
     public function searchemp(){
         $employees = AttendanceReport::select('name')->groupBy('name')->get();
-        $empDatas = "";
+        $empDatas = [];
         return view('report', compact('employees', 'empDatas'));
     }
 
     // get selected employee
     public function getEmpReport(Request $request) {
-        $sum = "";
+        $seconds = "";
+
+        $startDate = $request->startDate;
+        $endDate = $request->endDate;
+        $employee = $request->employee;
+
         $employees = AttendanceReport::select('name')->groupBy('name')->get();
         $empDatas = AttendanceReport::where('name', $request->employee)
-                                    ->where('LE', 'like',  "-%")
+                                    ->where('LE', 'NOT LIKE',  "-%")
                                     ->whereBetween('date', [$request->startDate, $request->endDate])
                                     ->get();
         foreach($empDatas as $empData){
-            $sum1 = str_replace('-', '', $empData->LE);
-            $sum += strtotime($sum1);
+            // $sum1 = str_replace('-', '', $empData->LE);
+            // $sum += strtotime($sum1);
+            list( $g, $i, $s ) = explode( ':', $empData->LE );
+            $seconds += $g * 3600;
+            $seconds += $i * 60;
+            $seconds += $s;
         }
-        dd(date('h:i:s', $sum));
-        $s = $sum;//date('h:i:s',  strtotime($sum));
-        return view('report', compact('employees', 'empDatas', 'sum'));
+        $hours    = floor( $seconds / 3600 );
+        $seconds -= $hours * 3600;
+        $minutes  = floor( $seconds / 60 );
+        $seconds -= $minutes * 60;
+
+        // echo "{$hours}:{$minutes}:{$seconds}";
+        $totalLETime = $hours.":".$minutes.":".$seconds;
+        return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'));
     }
 
     /**

@@ -14,29 +14,36 @@
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-
-Route::get('/', 'AttendanceReportController@importExport');
-
-Route::get('importExport', 'AttendanceReportController@importExport');
-Route::get('downloadExcel/{type}', 'AttendanceReportController@downloadExcel');
-Route::post('importExcel', 'AttendanceReportController@importExcel');
-
-// add note to employee
-Route::post('addnote', 'AttendanceReportController@addnote')->name('addnote');
-
-// get all attendance data
-Route::get('attendanceData', 'AttendanceReportController@getAttendanceReport')->name('allAttendaceData');
-
-Route::get('searchEmp', 'AttendanceReportController@searchemp')->name('searchemp');
-
-Route::post('report', 'AttendanceReportController@getEmpReport')->name('report');
-
-/* In out entry */
-Route::get('inout', function () {
-    return view('inout');
-});
 Auth::routes();
+Route::group(['middleware' => ['auth']], function () {
+    
+    Route::match(['get', 'post'], 'register', function(){
+        return redirect('/');
+    });
+    Route::get('/', 'AttendanceReportController@importExport');
 
-Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('importExport', 'AttendanceReportController@importExport');
+    Route::get('downloadExcel/{type}', 'AttendanceReportController@downloadExcel');
+    Route::post('importExcel', 'AttendanceReportController@importExcel');
+
+    // add note to employee
+    Route::post('addnote', 'AttendanceReportController@addnote')->name('addnote');
+
+    // get all attendance data
+    Route::get('attendanceData', 'AttendanceReportController@getAttendanceReport')->name('allAttendaceData');
+
+    Route::get('searchEmp', 'AttendanceReportController@searchemp')->name('searchemp');
+
+    Route::post('report', 'AttendanceReportController@getEmpReport')->name('report');
+
+    /* In out entry */
+    Route::get('inout', function () {
+        return view('inout');
+    });
+
+    Route::get('/home', 'HomeController@index')->name('home');
+
+});
+
 
 

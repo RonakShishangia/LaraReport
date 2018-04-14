@@ -7,49 +7,72 @@
 @endsection
 
 @section('content')
+@if (Auth::check())
 <form id="form" name="form" class="form-inline" action="{{route('report')}}" method="POST">
     {{csrf_field()}}
     <div class="form-group">
             
         <label for="sel1">Select list:</label>
-        <select class="form-control" id="sel1" name="employee">
+        <select class="form-control" id="sel1" name="employee" required>
+            <option value="">Select Employee</option>
             @foreach($employees as $emploee)
-                <option value="{{$emploee->name}}">{{$emploee->name}}</option>
+                <option>{{$emploee->name}}</option>
             @endforeach
-        </select>
-               
+        </select>      
         <div class="form-group">
             <label for="startDate">Start Date</label>
-            <input id="startDate" name="startDate" type="text" class="form-control" />
+            <input id="startDate" name="startDate" type="text" class="form-control" required/>
             &nbsp;
             <label for="endDate">End Date</label>
-            <input id="endDate" name="endDate" type="text" class="form-control" />
+            <input id="endDate" name="endDate" type="text" class="form-control" required/>
         </div>
         <input type="submit" class="btn btn-primary" value="Search" />
     </div>
 </form>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-        <th>Firstname</th>
-        <th>Lastname</th>
-        <th>Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse($empDatas as $empData)
-            <tr>
-                <td>{{$empData->name}}</td>
-                <td>{{$empData->date}}</td>
-                <td>{{$empData->LE}}</td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="3">No Data</td>
-            </tr>
-        @endforelse
-    </tbody>
-</table>
+    {{-- @if($empDatas->isNotEmpty()) --}}
+        <div class="panel panel-primary">
+            <!-- Default panel contents -->
+        <div class="panel-heading"><b>{{$empDatas == null ? 'List' : $empDatas[0]->name}}</b> <p class="pull-right"><b>From : </b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }}  |  <b>To : </b>{{ isset($startDate) ? date('d-m-Y', strtotime($endDate)) : "" }} | <b>Total Late Time : </b><span class="badge">{{isset($totalLETime) ? $totalLETime : ""}}</span></p></div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="bg-info">
+                            <th width="14%">NO.</th>
+                            <th width="14%">Date</th>
+                            <th width="14%">Entry Time</th>
+                            <th width="14%">Late Entry</th>
+                            <th width="14%">Exit Time</th>
+                            <th width="30%">Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $i = 1 @endphp
+                        @forelse($empDatas as $empData)
+                            <tr>
+                                <td>{{$i}}</td>
+                                <td>{{date('d-m-Y', strtotime($empData->date))}}</td>
+                                <td>{{$empData->officeIn}}</td>
+                                <td>{{$empData->LE}}</td>
+                                <td>{{$empData->officeOut}}</td>
+                                <td>{{$empData->note}}</td>
+                            </tr>
+                            @php $i++ @endphp
+                        @empty
+                            <tr>
+                                <td colspan="4" align="center">No Data</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <!-- List group -->
+            <div class="list-group">
+                <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}} <p class="pull-right"><b>Total Late Time : </b><span class="badge">{{isset($totalLETime) ? $totalLETime : ""}}</span></p></span>
+                </a>
+            </div>
+        </div>
+    {{-- @endif --}}
+@endif
 @endsection
 
 @section('script')

@@ -8,6 +8,7 @@
 @endsection
 
 @section('content')
+@if (Auth::check())
 	<div class="row text-center">
     	<form action="{{ URL::to('importExcel') }}" class="form-inline" method="post" enctype="multipart/form-data">
 			<div class="col-md-3">
@@ -78,7 +79,7 @@
 			</tfoot>
 		</table>
 	</div>
-
+@endif
 @endsection
 
 @section('script')		

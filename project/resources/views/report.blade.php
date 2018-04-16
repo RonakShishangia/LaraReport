@@ -16,7 +16,7 @@
         <select class="form-control" id="sel1" name="employee" required>
             <option value="">Select Employee</option>
             @foreach($employees as $emploee)
-                <option>{{$emploee->name}}</option>
+                <option value="{{$emploee->name}}">{{$emploee->name}}</option>
             @endforeach
         </select>      
         <div class="form-group">
@@ -67,7 +67,10 @@
             </div>
             <!-- List group -->
             <div class="list-group">
-                <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}} <p class="pull-right"><b>Total Late Time : </b><span class="badge">{{isset($totalLETime) ? $totalLETime : ""}}</span></p></span>
+                <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}} 
+                    <p class="pull-right"><b>Total Late Time : </b>
+                        <span class="badge">{{isset($totalLETime) ? $totalLETime : ""}}</span>
+                    </p>
                 </a>
             </div>
         </div>
@@ -166,18 +169,21 @@ $(function () {
       pickTime: false, 
       format: "YYYY-MM-DD", 
       defaultDate: sd, 
-      maxDate: ed 
+      maxDate: ed,
+      daysOfWeekDisabled: [0]
     });
   
     $('#endDate').datetimepicker({ 
       pickTime: false, 
       format: "YYYY-MM-DD", 
       defaultDate: ed, 
-      minDate: sd 
+      minDate: sd,
+      daysOfWeekDisabled: [0]
     });
 
     //passing 1.jquery form object, 2.start date dom Id, 3.end date dom Id
     bindDateRangeValidation($("#form"), 'startDate', 'endDate');
+
 });
     </script>
 @endsection

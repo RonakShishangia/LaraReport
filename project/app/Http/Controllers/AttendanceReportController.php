@@ -269,10 +269,8 @@ class AttendanceReportController extends Controller
 
     // get selected employee
     public function getEmpReport(Request $request) {
-        $request->all();
         try{
             $seconds = "";
-
             $startDate = $request->startDate;
             $endDate = $request->endDate;
             $employee = $request->employee;
@@ -297,7 +295,6 @@ class AttendanceReportController extends Controller
             // echo "{$hours}:{$minutes}:{$seconds}";
             $totalLETime = $hours.":".$minutes.":".$seconds;
             return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'));
-
         }catch(\Exception $ex){
             dd($ex);
         }

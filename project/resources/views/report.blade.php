@@ -29,6 +29,15 @@
         <input type="submit" class="btn btn-primary" value="Search" />
     </div>
 </form>
+@if($errors->count() > 0)
+<p>The following errors have occurred:</p>
+
+<ul>
+  @foreach($errors->all() as $message)
+    <li>{{$message}}</li>
+  @endforeach
+</ul>
+@endif
     {{-- @if($empDatas->isNotEmpty()) --}}
         <div class="panel panel-primary">
             <!-- Default panel contents -->
@@ -37,12 +46,19 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr class="bg-info">
-                            <th width="14%">NO.</th>
-                            <th width="14%">Date</th>
-                            <th width="14%">Entry Time</th>
-                            <th width="14%">Late Entry</th>
-                            <th width="14%">Exit Time</th>
-                            <th width="30%">Note</th>
+                            <th>NO.</th>
+                            <th>Date</th>
+                            <th>Attendance</th>
+                            <th>Entry Time</th>
+                            <th>Late Entry</th>
+                            <th>Exit Time</th>
+                            
+                            <th>Total Time</th>
+                            <th>Worked Time</th>
+                            <th>Total Break Time</th>
+                            <th>Thumb</th>
+                            
+                            <th>Note</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,10 +66,15 @@
                         @forelse($empDatas as $empData)
                             <tr>
                                 <td>{{$i}}</td>
+                                <td class="{{$empData->attendance=="Absent" ? 'text-danger' : 'text-success'}}">{{$empData->attendance}}</td>
                                 <td>{{date('d-m-Y', strtotime($empData->date))}}</td>
-                                <td>{{$empData->officeIn}}</td>
-                                <td>{{$empData->LE}}</td>
-                                <td>{{$empData->officeOut}}</td>
+                                <td>{{$empData->officeIn=="00:00:00" ? "-" : $empData->officeIn}}</td>
+                                <td>{{$empData->LE=="00:00:00" ? "-" : $empData->LE}}</td>
+                                <td>{{$empData->officeOut=="00:00:00" ? "-" : $empData->officeOut}}</td>
+                                <td>{{$empData->total_time=="00:00:00" ? "-" : $empData->total_time}}</td>
+                                <td>{{$empData->worked_time=="00:00:00" ? "-" : $empData->worked_time}}</td>
+                                <td>{{$empData->total_break_time=="00:00:00" ? "-" : $empData->total_break_time}}</td>
+                                <td>{{$empData->not_thumb==0 ? "Not Thumb" : "-"}}</td>
                                 <td>{{$empData->note}}</td>
                             </tr>
                             @php $i++ @endphp

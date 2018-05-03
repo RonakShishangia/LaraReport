@@ -41,6 +41,8 @@ Route::group(['middleware' => ['auth']], function () {
         return view('inout');
     });
 
+    Route::resource('master', 'CompanyController');
+
     Route::get('/home', 'HomeController@index')->name('home');
 
 });

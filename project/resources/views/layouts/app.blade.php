@@ -19,7 +19,16 @@
 					{{-- <li><a href="{{ route('login') }}">Login</a></li> --}}
 				@else
 					<li class=""><a href="{{route('searchemp')}}">Report</a></li>
-					<li class=""><a href="{{route('master.index')}}">Master</a></li>
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Masters
+						<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="{{route('master.index')}}">Company</a></li>
+							<li><a href="#">Department</a></li>
+							<li><a href="#">Employees</a></li>
+						</ul>
+					</li>
+					
 					{{-- <li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 							{{ Auth::user()->name }}

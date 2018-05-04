@@ -277,9 +277,9 @@ class AttendanceReportController extends Controller
     
             $employees = AttendanceReport::select('name')->groupBy('name')->get();
             $empDatas = AttendanceReport::where('name', $request->employee)
-                                        ->where('LE', 'NOT LIKE',  "-%")
+                                        // ->where('LE', 'NOT LIKE',  "-%")
                                         ->whereBetween('date', [$request->startDate, $request->endDate])
-                                        ->get();
+                                        ->orderBy('date', 'asc')->get();
             foreach($empDatas as $empData){
                 // $sum1 = str_replace('-', '', $empData->LE);
                 // $sum += strtotime($sum1);
@@ -287,7 +287,13 @@ class AttendanceReportController extends Controller
                 $seconds += $g * 3600;
                 $seconds += $i * 60;
                 $seconds += $s;
+                
+                $empData['day'] = date('l', strtotime($empData->date));
+                // array_push($empDatas, $empData['day']);
             }
+            // echo "<pre>";
+            // print_r($empDatas);
+            // dd();
             $hours    = floor( $seconds / 3600 );
             $seconds -= $hours * 3600;
             $minutes  = floor( $seconds / 60 );

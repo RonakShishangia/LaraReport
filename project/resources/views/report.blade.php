@@ -2,7 +2,7 @@
 
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    {{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css">
 @endsection
 
@@ -47,6 +47,7 @@
                     <thead>
                         <tr class="bg-info">
                             <th>NO.</th>
+                            <th>Day</th>
                             <th>Date</th>
                             <th>Attendance</th>
                             <th>Entry Time</th>
@@ -66,15 +67,16 @@
                         @forelse($empDatas as $empData)
                             <tr>
                                 <td>{{$i}}</td>
-                                <td class="{{$empData->attendance=="Absent" ? 'text-danger' : 'text-success'}}">{{$empData->attendance}}</td>
+                                <td>{{$empData->day}}</td>
                                 <td>{{date('d-m-Y', strtotime($empData->date))}}</td>
+                                <td class="{{$empData->attendance=="Absent" ? 'text-danger' : 'text-success'}}">{{$empData->attendance}}</td>
                                 <td>{{$empData->officeIn=="00:00:00" ? "-" : $empData->officeIn}}</td>
-                                <td>{{$empData->LE=="00:00:00" ? "-" : $empData->LE}}</td>
+                                <td class="{{ substr_count($empData->LE, '-') ? 'text-success' : "text-danger" }}">{{$empData->LE=="00:00:00" ? "-" : $empData->LE}}</td>
                                 <td>{{$empData->officeOut=="00:00:00" ? "-" : $empData->officeOut}}</td>
                                 <td>{{$empData->total_time=="00:00:00" ? "-" : $empData->total_time}}</td>
                                 <td>{{$empData->worked_time=="00:00:00" ? "-" : $empData->worked_time}}</td>
                                 <td>{{$empData->total_break_time=="00:00:00" ? "-" : $empData->total_break_time}}</td>
-                                <td>{{$empData->not_thumb==0 ? "Not Thumb" : "-"}}</td>
+                                <td>{{ $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? "Not Thumb" : "-" : "-"}}</td>
                                 <td>{{$empData->note}}</td>
                             </tr>
                             @php $i++ @endphp
@@ -100,9 +102,9 @@
 @endsection
 
 @section('script')
-    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script> --}}
+    {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script> --}}
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"></script> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"> </script>
     <script>
@@ -191,15 +193,15 @@ $(function () {
       format: "YYYY-MM-DD", 
       defaultDate: sd, 
       maxDate: ed,
-      daysOfWeekDisabled: [0]
+    //   daysOfWeekDisabled: [0]
     });
   
     $('#endDate').datetimepicker({ 
       pickTime: false, 
       format: "YYYY-MM-DD", 
       defaultDate: ed, 
-      minDate: sd,
-      daysOfWeekDisabled: [0]
+    //   minDate: sd,
+    //   daysOfWeekDisabled: [0]
     });
 
     //passing 1.jquery form object, 2.start date dom Id, 3.end date dom Id

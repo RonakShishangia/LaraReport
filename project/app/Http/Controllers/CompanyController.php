@@ -15,7 +15,7 @@ class CompanyController extends Controller
     public function index()
     {
         $company = Company::first();
-        return view('master.master', compact('company'));
+        return view('master.company', compact('company'));
     }
 
     /**
@@ -36,7 +36,28 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $this->validate($request,[
+            'name'=>'required',
+            'email'=>'required|email',
+            'startTime'=>'required',
+            'endTime'=>'required',
+            'dutyTime'=>'required'
+        ]);
+        $data=$request->all();
+        $data['startTime']=date("H:i", strtotime(str_replace(" ","",$request->startTime)));
+        $data['endTime']=date("H:i", strtotime(str_replace(" ","",$request->endTime)));
+        if($request->company_id==0){
+            Company::create($data);
+            $msg='Company Added Successfully..';
+        }
+        else{
+            $company=Company::find($request->company_id);
+            $company->update($data);
+            $msg='Company Updated Successfully..';
+        }
+        \Session::flash('success',$msg);
+        return redirect()->route('company.index');
     }
 
     /**

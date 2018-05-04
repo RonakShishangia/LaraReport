@@ -16,7 +16,7 @@
 // });
 Auth::routes();
 Route::group(['middleware' => ['auth']], function () {
-    
+
     Route::match(['get', 'post'], 'register', function(){
         return redirect('/');
     });
@@ -41,11 +41,8 @@ Route::group(['middleware' => ['auth']], function () {
         return view('inout');
     });
 
-    Route::resource('master', 'CompanyController');
+    Route::resource('company', 'CompanyController');
 
     Route::get('/home', 'HomeController@index')->name('home');
 
 });
-
-
-

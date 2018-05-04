@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" >
 	<link rel="stylesheet" href="{{ asset('css/toastr.css')}}" >
-	
+
 	@yield('styles')
 </head>
 <body>
@@ -14,7 +14,7 @@
 			<a class="navbar-brand" href="{{url('/')}}">Import - CSV </a>
 			</div>
 			<ul class="nav navbar-nav">
-				
+
 				@if (Auth::guest())
 					{{-- <li><a href="{{ route('login') }}">Login</a></li> --}}
 				@else
@@ -23,12 +23,12 @@
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Masters
 						<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="{{route('master.index')}}">Company</a></li>
+							<li><a href="{{route('company.index')}}">Company</a></li>
 							<li><a href="#">Department</a></li>
 							<li><a href="#">Employees</a></li>
 						</ul>
 					</li>
-					
+
 					{{-- <li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 							{{ Auth::user()->name }}
@@ -70,7 +70,7 @@
 	<div class="container-fluid">
 	    @yield('content')
 	</div>
-	
+
 
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" role="dialog">
@@ -88,14 +88,14 @@
 							<label for="comment">NOTE:</label>
 							<input type="hidden" name="userId" id="userId">
 							<textarea class="form-control" rows="5" id="adduserNote" name="adduserNote"></textarea>
-						</div> 
+						</div>
 					</div>
 						<div class="modal-footer">
 							<button type="submit" name="button" class="btn btn-primary">Save</button>
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</div>
-			</form>  
+			</form>
 		</div>
 	</div>
 
@@ -129,7 +129,7 @@
 		@endif
 		@if(Session::has('error'))
 			toastr.error("{{ Session::get('error') }}");
-		@endif 
+		@endif
 	</script>
     @yield('script')
 </body>

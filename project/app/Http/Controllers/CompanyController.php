@@ -15,7 +15,7 @@ class CompanyController extends Controller
     public function index()
     {
         $company = Company::first();
-        return view('master.master', compact('company'));
+        return view('master.company', compact('company'));
     }
 
     /**

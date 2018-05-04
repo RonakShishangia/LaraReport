@@ -2,7 +2,7 @@
 <head>
 	<title>{{"Nkonnect infoway"}}</title>
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" >
+	{{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" > --}}
 	<link rel="stylesheet" href="{{ asset('css/toastr.css')}}" >
 	
 	@yield('styles')
@@ -24,7 +24,7 @@
 						<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="{{route('master.index')}}">Company</a></li>
-							<li><a href="#">Department</a></li>
+							<li><a href="{{route('department.index')}}">Department</a></li>
 							<li><a href="#">Employees</a></li>
 						</ul>
 					</li>

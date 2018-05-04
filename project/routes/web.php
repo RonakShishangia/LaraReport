@@ -42,6 +42,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::resource('master', 'CompanyController');
+    Route::resource('department', 'DepartmentController');
 
     Route::get('/home', 'HomeController@index')->name('home');
 

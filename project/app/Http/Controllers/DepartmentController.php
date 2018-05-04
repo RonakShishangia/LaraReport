@@ -14,7 +14,9 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        $departments = Department::all();
+        // dd($departments);
+        return view('master.department', compact('departments'));
     }
 
     /**
@@ -35,7 +37,27 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|max:255|unique:departments,name,'. $request->editId,
+        ]);
+        try{
+            if($request->editId==""){
+                $department = new Department;
+                $department->name = strtoupper($request->name);
+                $department->save();
+                \Session::flash("success","Success - Record Added Successfully..");
+                return redirect()->route('department.index');
+            }else{
+                $department = Department::find($request->editId);
+                $department->name = strtoupper($request->name);
+                $department->save();
+                \Session::flash("success","Success - Record Updated Successfully..");
+                return redirect()->route('department.index');
+            }
+        }catch(\Exception $e){
+            \Session::flash("error","Error - Record can not be added..");
+            return redirect()->route('department.index');
+        }
     }
 
     /**
@@ -57,7 +79,11 @@ class DepartmentController extends Controller
      */
     public function edit(Department $department)
     {
-        //
+        try{
+            
+        }catch(\Exception $e){
+
+        }
     }
 
     /**
@@ -80,6 +106,16 @@ class DepartmentController extends Controller
      */
     public function destroy(Department $department)
     {
-        //
+        try{
+            $department->delete();
+            \Session::flash("success","Success - Record Deleted Successfully..");
+            return redirect()->route('department.index');
+        }catch(\Exception $e){
+            dd($e);
+            \Session::flash("error","Error - Record can Not Be Deleted..");
+            return redirect()->route('department.index');
+
+        }
+
     }
 }

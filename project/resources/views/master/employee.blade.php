@@ -29,8 +29,8 @@
                         <td>{{ $employee->department->name }}</td>
                         <td>{{ $employee->chat_id }}</td>
                         <td>
-                            <a class="btn btn-primary edit" data-tr="{{ $employee }}">Edit</a>
-                            <a class="btn btn-danger" onclick="$('#deleteForm{{$employee->id}}').submit();">Delete</a>
+                            <a class="btn btn-primary btn-xs edit" data-tr="{{ $employee }}">Edit</a>
+                            <a class="btn btn-danger btn-xs" onclick="$('#deleteForm{{$employee->id}}').submit();">Delete</a>
                             <form id='deleteForm{{$employee->id}}' action="{{route('employee.destroy', $employee->id)}}" method="POST">
                                 {{csrf_field()}}{{method_field("DELETE")}}
                             </form>
@@ -58,12 +58,12 @@
                         <input type="text" class="form-control" name="name" id="name" value="{{ old('name')}}" placeholder="Enter Employee name" required autofocus>
                         <small class="text-danger">{{ $errors->first('name') }}</small>
                     </div>
-                    <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                    <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}" id="pass_id">
                             <label for="password">Password:</label>
                             <input type="password" class="form-control" name="password" id="password" value="{{ old('password')}}" placeholder="Enter Password" required autofocus>
                             <small class="text-danger">{{ $errors->first('password') }}</small>
                         </div>
-                    <div class="form-group{{ $errors->has('confirm_password') ? ' has-error' : '' }}">
+                    <div class="form-group{{ $errors->has('confirm_password') ? ' has-error' : '' }}" id="c_pass">
                             <label for="confirm_password">Confirm Password:</label>
                             <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required autofocus>
                             <small class="text-danger">{{ $errors->first('confirm_password') }}</small>
@@ -76,7 +76,7 @@
                             @endforeach
                         </select>
                       </div> 
-                    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}" id="email_div">
                         <label for="email">Email:</label>
                         <input type="text" class="form-control" name="email" id="email" value="{{ old('email')}}" placeholder="Enter Email" required autofocus>
                         <small class="text-danger">{{ $errors->first('email') }}</small>
@@ -93,7 +93,7 @@
                     </div>
                     <div class="pull-right">
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="reset" class="btn btn-default">Reset</button>
+                        <button type="reset" class="btn btn-default" id="reset1">Reset</button>
                     </div>
                 </form> 
             </div>
@@ -105,9 +105,14 @@
 @section('script')
 <script>
     $(".edit").click(function(){
-        var department = $(this).data('tr');
-        $('#name').val(department.name);
-        $('#editId').val(department.id);
+        var employee = $(this).data('tr');
+        $('#editId').val(employee.id);
+        $('#name').val(employee.name);
+        $('#department_id').val(employee.department_id);
+        $('#contact').val(employee.contact);
+        $('#chat_id').val(employee.chat_id);
+        $('#email').val(employee.email).prop("readonly", true);
+        $("#pass_id, #c_pass").remove();
     });
 </script>
 @endsection

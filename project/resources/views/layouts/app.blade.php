@@ -1,8 +1,7 @@
 <html lang="en">
 <head>
 	<title>{{"Nkonnect infoway"}}</title>
-    <link rel="stylesheet" href="{{asset('css/app.css')}}">
-	{{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" > --}}
+	<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/toastr.css')}}" >
 
 	@yield('styles')

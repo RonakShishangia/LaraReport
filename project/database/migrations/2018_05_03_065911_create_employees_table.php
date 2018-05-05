@@ -15,15 +15,17 @@ class CreateEmployeesTable extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('department_id')->unsigned();
+            $table->integer('user_id')->unsigned();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
-            $table->integer('department_id')->unsigned();
             $table->string('contact')->nullable();
-            $table->string('telegram_id')->nullable();
+            $table->string('chat_id')->nullable();
             $table->SoftDeletes();
             $table->timestamps();
 
             $table->foreign('department_id')->references('id')->on('departments');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

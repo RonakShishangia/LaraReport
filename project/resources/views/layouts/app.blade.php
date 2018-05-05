@@ -25,7 +25,7 @@
 						<ul class="dropdown-menu">
 							<li><a href="{{route('company.index')}}">Company</a></li>
 							<li><a href="{{ route('department.index') }}">Department</a></li>
-							<li><a href="#">Employees</a></li>
+							<li><a href="{{ route('employee.index') }}">Employees</a></li>
 						</ul>
 					</li>
 

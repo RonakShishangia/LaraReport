@@ -303,6 +303,8 @@ class AttendanceReportController extends Controller
             return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'));
         }catch(\Exception $ex){
             dd($ex);
+            session()->flash('error','Error :  Something went wrong.');
+            return redirect('/');
         }
         
     }

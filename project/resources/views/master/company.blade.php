@@ -13,18 +13,18 @@
                         <input type="hidden" name="company_id" id="company_id" value="0">
                         <div class="form-group {{ $errors->has('name') ? 'has-error' : '' }}">
                             <label for="name">Name:</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter Company name" required autofocus>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ old('name')}}" placeholder="Enter Company name" required autofocus>
                             <span class="text-danger">{{ $errors->first('name') }}</span>
                         </div>
                         <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
                             <label for="email">Email address:</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Company Email">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter Company Email" value="{{ old('email')}}"  required>
                             <span class="text-danger">{{ $errors->first('email') }}</span>
                         </div>
                         <div class="form-group {{ $errors->has('startTime') ? 'has-error' : '' }}">
                             <label for="">OfficeIn Time</label>
                             <div class='input-group date datetimepicker3'>
-                                <input type='text' class="form-control" name="startTime" id="startTime" />
+                                <input type='text' class="form-control" name="startTime" id="startTime" value="{{ old('startTime')}}" required/>
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-time"></span>
                                 </span>
@@ -34,7 +34,7 @@
                         <div class="form-group {{ $errors->has('endTime') ? 'has-error' : '' }}">
                             <label for="">OfficeOut Time</label>
                             <div class='input-group date datetimepicker3'>
-                                <input type='text' class="form-control" name="endTime" id="endTime"/>
+                                <input type='text' class="form-control" name="endTime" id="endTime" value="{{ old('endTime')}}" required/>
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-time"></span>
                                 </span>
@@ -43,7 +43,7 @@
                         </div>
                         <div class="form-group {{ $errors->has('dutyTime') ? 'has-error' : '' }}">
                             <label for="">Total Working Time <small>(HH:MM)</small></label>
-                            <input type='text' class="form-control" id="dutyTime" name="dutyTime" required placeholder="HH:MM"/>
+                            <input type='text' class="form-control" id="dutyTime" name="dutyTime"  value="{{ old('dutyTime')}}"  placeholder="HH:MM" required/>
                             <span class="text-danger">{{ $errors->first('dutyTime') }}</span>
                         </div>
                         <div class="pull-right">
@@ -60,7 +60,7 @@
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <strong class="panel-title">Company Details</strong>
-                <button type="button" name="edit" id="edit" class="pull-right btn btn-info btn-sm" data-company="{{ $company }}">Edit Info</button>
+                @if(count($company)>0) <button type="button" name="edit" id="edit" class="pull-right btn btn-info btn-sm" data-company="{{ $company }}">Edit Info</button> @endif
             </div>
             <div class="panel-body">
                 @if(count($company)>0)

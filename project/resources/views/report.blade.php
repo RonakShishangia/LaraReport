@@ -29,15 +29,7 @@
         <input type="submit" class="btn btn-primary" value="Search" />
     </div>
 </form>
-@if($errors->count() > 0)
-<p>The following errors have occurred:</p>
-
-<ul>
-  @foreach($errors->all() as $message)
-    <li>{{$message}}</li>
-  @endforeach
-</ul>
-@endif
+{{-- {{isset($empDatas) ? $empDatas : ""}} --}}
     {{-- @if($empDatas->isNotEmpty()) --}}
         <div class="panel panel-primary">
             <!-- Default panel contents -->
@@ -82,7 +74,7 @@
                             @php $i++ @endphp
                         @empty
                             <tr>
-                                <td colspan="4" align="center">No Data</td>
+                                <td colspan="12" align="center"></td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -102,7 +94,7 @@
 @endsection
 
 @section('script')
-    {{-- <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script> --}}
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
     {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script> --}}
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"></script> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>

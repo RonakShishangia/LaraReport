@@ -4,6 +4,30 @@
 @endsection
 @section('content')
 <div class="row">
+    
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <strong class="panel-title">Company Details</strong>
+                @if(count($company)>0) <button type="button" name="edit" id="edit" class="pull-right btn btn-info btn-sm" data-company="{{ $company }}">Edit Info</button> @endif
+            </div>
+            <div class="panel-body">
+                @if(count($company)>0)
+                    <legend class="text-primary">{{ $company->name }}</legend>
+                    <address class="">
+                        <strong>Email:</strong> {{ $company->email }}<br>
+                        <strong>OfficeIn:</strong> {{ date("g:i A",strtotime($company->startTime)) }}<br>
+                        <strong>OfficeOut:</strong> {{ date("g:i A",strtotime($company->endTime)) }}<br>
+                        <strong>DutyHr.:</strong> {{ $company->dutyTime }}<br>
+                    </address>
+                @else
+                    <div class="alert alert-info">
+                        <h3>Sorry...No any company data registered with us.</h3>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">Company Details</div>
@@ -54,29 +78,6 @@
 
             </div>
 
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <strong class="panel-title">Company Details</strong>
-                @if(count($company)>0) <button type="button" name="edit" id="edit" class="pull-right btn btn-info btn-sm" data-company="{{ $company }}">Edit Info</button> @endif
-            </div>
-            <div class="panel-body">
-                @if(count($company)>0)
-                    <legend class="text-primary">{{ $company->name }}</legend>
-                    <address class="">
-                        <strong>Email:</strong> {{ $company->email }}<br>
-                        <strong>OfficeIn:</strong> {{ date("g:i A",strtotime($company->startTime)) }}<br>
-                        <strong>OfficeOut:</strong> {{ date("g:i A",strtotime($company->endTime)) }}<br>
-                        <strong>DutyHr.:</strong> {{ $company->dutyTime }}<br>
-                    </address>
-                @else
-                    <div class="alert alert-info">
-                        <h3>Sorry...No any company data registered with us.</h3>
-                    </div>
-                @endif
-            </div>
         </div>
     </div>
 </div>

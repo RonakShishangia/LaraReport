@@ -51,18 +51,26 @@
 			</ul>
 			@if (Auth::check())
 				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span> {{ Auth::user()->name }} <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+					  <li align="center">
+						<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} </form>
+						{{-- <div><img class="img-responsive" style="padding:7%;" src="http://placehold.it/150x150"/><a class="change" href="#"></a></div>
+						<br> --}}
+						<a href="{{ route('logout') }}" style="padding:4%;" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-sm btn-default">  <span class="glyphicon glyphicon-log-out"></span> Logout</a>
+					  </li>
+					 </ul>
+				  </li>
+				</ul>
+				{{-- <ul class="nav navbar-nav navbar-right">
 						<li>
-							<a href="{{ route('logout') }}"
-								onclick="event.preventDefault();
-										document.getElementById('logout-form').submit();">
-								Logout
-							</a>
-							<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-								{{ csrf_field() }}
+							<a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"> Logout </a>
+							<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} 
 							</form>
 						</li>
 						<li><a href="#"><span class="glyphicon glyphicon-user"></span> {{ Auth::user()->name }}</a></li>
-				</ul>
+				</ul> --}}
 			@endif
 		</div>
 	</nav>

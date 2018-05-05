@@ -68,6 +68,5 @@
         $('#name').val(department.name);
         $('#editId').val(department.id);
     });
-    $('.delete').
 </script>
 @endsection

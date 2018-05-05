@@ -114,7 +114,6 @@ class DepartmentController extends Controller
             dd($e);
             \Session::flash("error","Error - Record can Not Be Deleted..");
             return redirect()->route('department.index');
-
         }
 
     }

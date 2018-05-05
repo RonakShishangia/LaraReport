@@ -82,9 +82,14 @@
             </div>
             <!-- List group -->
             <div class="list-group">
+                {{-- {{ceil(array_sum($ExitTimeArr)/count($ExitTimeArr))}} --}}
                 <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}} 
                     <p class="pull-right"><b>Total Late Time : </b>
                         <span class="badge">{{isset($totalLETime) ? $totalLETime : ""}}</span>
+                    </p>
+                    
+                    <p class="pull-right"><b>Average Entry Time : </b>
+                    <span class="badge"></span>
                     </p>
                 </a>
             </div>

@@ -16,14 +16,14 @@
 <form id="form" name="form" class="form-inline" action="{{route('report')}}" method="POST">
     {{csrf_field()}}
     <div class="form-group">
-            
+
         <label for="sel1">Select list:</label>
         <select class="form-control" id="sel1" name="employee" required>
             <option value="">Select Employee</option>
             @foreach($employees as $emploee)
                 <option value="{{$emploee->name}}">{{$emploee->name}}</option>
             @endforeach
-        </select>      
+        </select>
         <div class="form-group">
             <label for="startDate">Start Date</label>
             <input id="startDate" name="startDate" type="text" class="form-control" required/>
@@ -86,7 +86,7 @@
                             <th>Worked Time</th>
                             <th>Total Break Time</th>
                             <th>Thumb</th>
-                            
+
                             <th>Note</th>
                         </tr>
                     </thead>
@@ -215,11 +215,11 @@
     if(!(f instanceof jQuery)){
 		console.log("Not passing a jQuery object");
     }
-  
+
     var jqForm = f,
         startDateId = s,
         endDateId = e;
-  
+
     var checkDateRange = function (startDate, endDate) {
         var isValid = (startDate != "" && endDate != "") ? startDate <= endDate : true;
         return isValid;
@@ -258,13 +258,13 @@
         }
         if (!bstpValidate) {
             jqForm.bootstrapValidator({
-                excluded: [':disabled'], 
+                excluded: [':disabled'],
             })
         }
-      
+
         jqForm.bootstrapValidator('addField', startDateId, validateFields.startDate);
         jqForm.bootstrapValidator('addField', endDateId, validateFields.endDate);
-      
+
     };
 
     var hookValidatorEvt = function () {
@@ -290,19 +290,19 @@
 
 $(function () {
     var sd = new Date(), ed = new Date();
-  
-    $('#startDate').datetimepicker({ 
-      pickTime: false, 
-      format: "YYYY-MM-DD", 
-      defaultDate: sd, 
+
+    $('#startDate').datetimepicker({
+      pickTime: false,
+      format: "YYYY-MM-DD",
+      defaultDate: sd,
       maxDate: ed,
     //   daysOfWeekDisabled: [0]
     });
-  
-    $('#endDate').datetimepicker({ 
-      pickTime: false, 
-      format: "YYYY-MM-DD", 
-      defaultDate: ed, 
+
+    $('#endDate').datetimepicker({
+      pickTime: false,
+      format: "YYYY-MM-DD",
+      defaultDate: ed,
     //   minDate: sd,
     //   daysOfWeekDisabled: [0]
     });

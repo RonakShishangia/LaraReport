@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Validation\Rule;
 use App\Employee;
 use App\Department;
 use App\User;
@@ -18,6 +18,7 @@ class EmployeeController extends Controller
     {
         $employees = Employee::all();
         $departments = Department::all();
+        $users = User::all();
         // dd($departments);
     
         return view('master.employee', compact('employees','departments'));   
@@ -41,33 +42,58 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        if($request->editId != ""){
+            $this->validate($request, [
+                'name' => 'required|max:255',
+                'department_id' => 'required',
+                'contact' => 'required|numeric',
+            ]);
+        }else{
+            $this->validate($request, [
                 'name' => 'required|max:255',
                 'password' => 'required|max:255|',
                 'confirm_password' => 'required_with:password|same:password|max:255',
                 'department_id' => 'required',
                 'contact' => 'required|numeric',
-                'email' => 'required|email|unique:users,email'
+                'email' => 'required|email|unique:users,email',
             ]);
-        try{
-            $user = new User;
-            $user->name = strtoupper($request->name);
-            $user->email = $request->email;
-            $user->password = bcrypt($request->password);
-            $user->save();
+        }
 
-            $employee = new Employee;
-            $employee->user_id = $user->id;
-            $employee->name = strtoupper($request->name);
-            $employee->email = $request->email;
-            $employee->contact = $request->contact;
-            $employee->department_id = $request->department_id;
-            $employee->chat_id = $request->chat_id;
-            $employee->save();
-        \Session::flash("success","Success - Record Added Successfully..");
-        return redirect()->route('employee.index');
-            
-            
+        try{
+            if($request->editId==""){
+                    $user = new User;
+                    $user->name = strtoupper($request->name);
+                    $user->email = $request->email;
+                    $user->password = bcrypt($request->password);
+                    $user->save();
+
+                    $employee = new Employee;
+                    $employee->user_id = $user->id;
+                    $employee->name = strtoupper($request->name);
+                    $employee->email = $request->email;
+                    $employee->contact = $request->contact;
+                    $employee->department_id = $request->department_id;
+                    $employee->chat_id = $request->chat_id;
+                    $employee->save();
+
+                \Session::flash("success","Success - Record Added Successfully..");
+                return redirect()->route('employee.index');
+            }
+            else{
+                    $employee = Employee::find($request->editId);    
+                    $employee->name = strtoupper($request->name);
+                    $employee->contact = $request->contact;
+                    $employee->department_id = $request->department_id;
+                    $employee->chat_id = $request->chat_id;
+                    $employee->save();
+                    
+                    $user = User::find($employee->user->id);    
+                    $user->name = strtoupper($request->name);
+                    $user->save();
+                    
+                    \Session::flash("success","Success - Record Updated Successfully..");
+                    return redirect()->route('employee.index');
+            }
         }catch(\Exception $e){
             dd($e);
             \Session::flash("error","Error - Record can not be added..");

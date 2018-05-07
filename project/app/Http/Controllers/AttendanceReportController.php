@@ -61,8 +61,8 @@ class AttendanceReportController extends Controller
                         $thumbs[$tmpLine[2]]['not_thumb'] = false;
                     }
                     else{
-                        $thumbs[$tmpLine[2]]['attendance'] = "Present";
                         $thumbs[$tmpLine[2]]['not_thumb'] = true;
+                        $thumbs[$tmpLine[2]]['attendance'] = "Present";
                     }
                    
                     $thumbs[$tmpLine[2]]['break'] = explode(';', str_replace($search_string, $replace_string, rtrim($tmpLine[18], ';')));
@@ -105,33 +105,30 @@ class AttendanceReportController extends Controller
                     $exitDiff =  strtotime($companyEndTime) - strtotime($thumbs[$tmpLine[2]]['officeOut']);
                     
                     // check "not_thumb is false of not
-                    if($thumbs[$tmpLine[2]]['not_thumb'] == true){
+                    if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
                         // Late entry time diffrence
-                        if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
+                        // if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
                             if(strtotime($thumbs[$tmpLine[2]]['officeIn']) > strtotime($companyStartTime))
-                            $entryTimeDiff = gmdate('H:i:s', abs($entryDiff));
+                                $entryTimeDiff = gmdate('H:i:s', abs($entryDiff));
                             elseif(strtotime($thumbs[$tmpLine[2]]['officeIn']) < strtotime($companyStartTime))
-                            $entryTimeDiff = '-'.gmdate('H:i:s', abs($entryDiff));
+                                $entryTimeDiff = '-'.gmdate('H:i:s', abs($entryDiff));
                             else
-                            $entryTimeDiff = "00:00:00";
-                        }
+                                $entryTimeDiff = "00:00:00";
+                        // }
                         // (OT) Exit time diffrence
-                        if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
+                        // if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
                             if(strtotime($thumbs[$tmpLine[2]]['officeOut']) > strtotime($companyEndTime))
-                            $exitTimeDiff = gmdate('H:i:s', abs($exitDiff));
+                                $exitTimeDiff = gmdate('H:i:s', abs($exitDiff));
                             elseif(strtotime($thumbs[$tmpLine[2]]['officeOut']) < strtotime($companyEndTime))
-                            $exitTimeDiff = '-'.gmdate('H:i:s', abs($exitDiff));
+                                $exitTimeDiff = '-'.gmdate('H:i:s', abs($exitDiff));
                             else
-                            $exitTimeDiff = "00:00:00";
-                        }
+                                $exitTimeDiff = "00:00:00";
+                        // }
                     }else{
                         $entryTimeDiff = "00:00:00";
                         $exitTimeDiff = "00:00:00";
                     }
-                    // dd($entryTimeDiff);                
-                    // Exit time diffrence
-                    // $thumbs[$tmpLine[2]]['attendance'] == "Present" ? $exitTimeDiff = gmdate('H:i:s', $exitDiff) : $exitTimeDiff = "00:00:00";
-    
+
                     // dd($thumbs[$tmpLine[2]]['attendance']);
                     $tmpLine[0] = date('Y-m-d', strtotime($tmpLine[0]));
                     $tmpLine[10] = str_replace('(SE)', '', $tmpLine[10]);
@@ -274,6 +271,9 @@ class AttendanceReportController extends Controller
             $startDate = $request->startDate;
             $endDate = $request->endDate;
             $employee = $request->employee;
+            
+            $EntryTimeArr = [];
+            $ExitTimeArr = [];
     
             $employees = AttendanceReport::select('name')->groupBy('name')->get();
             $empDatas = AttendanceReport::where('name', $request->employee)
@@ -281,6 +281,7 @@ class AttendanceReportController extends Controller
                                         ->whereBetween('date', [$request->startDate, $request->endDate])
                                         ->orderBy('date', 'asc')->get();
             foreach($empDatas as $empData){
+                $tempCalcData = [];
                 // $sum1 = str_replace('-', '', $empData->LE);
                 // $sum += strtotime($sum1);
                 list( $g, $i, $s ) = explode( ':', $empData->LE );
@@ -290,17 +291,28 @@ class AttendanceReportController extends Controller
                 
                 $empData['day'] = date('l', strtotime($empData->date));
                 // array_push($empDatas, $empData['day']);
+
+                // $tempCalcData['officeIn'] = strtotime($empData->officeIn);
+                // $tempCalcData['officeOut'] = strtotime($empData->officeOut);
+                // $tempCalcData['LE'] = strtotime($empData->LE);
+                array_push($EntryTimeArr, $empData->officeIn);
+                array_push($ExitTimeArr, $empData->officeOut);
             }
-            // echo "<pre>";
-            // print_r($empDatas);
-            // dd();
+            // dd($calcData);
             $hours    = floor( $seconds / 3600 );
             $seconds -= $hours * 3600;
             $minutes  = floor( $seconds / 60 );
             $seconds -= $minutes * 60;
             // echo "{$hours}:{$minutes}:{$seconds}";
             $totalLETime = $hours.":".$minutes.":".$seconds;
-            return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'));
+            // echo "<pre>";
+            // dd($empDatas->avg());
+            // dd();
+            
+            
+
+
+            return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee', 'EntryTimeArr', 'ExitTimeArr'));
         }catch(\Exception $ex){
             dd($ex);
             session()->flash('error','Error :  Something went wrong.');

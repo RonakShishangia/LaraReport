@@ -4,6 +4,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css">
     {{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css">
+    <style media="screen">
+        #tblreport tr > th {
+            text-align: center;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -33,7 +38,39 @@
     {{-- @if($empDatas->isNotEmpty()) --}}
         <div class="panel panel-primary">
             <!-- Default panel contents -->
-        <div class="panel-heading"><b>{{$empDatas == null ? 'List' : $empDatas[0]->name}}</b> <p class="pull-right"><b>From : </b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }}  |  <b>To : </b>{{ isset($startDate) ? date('d-m-Y', strtotime($endDate)) : "" }} | <b>Total Late Time : </b><span class="badge">{{isset($totalLETime) ? $totalLETime : ""}}</span></p></div>
+        @if(count($empDatas) > 0) 
+
+        @php
+        function sumOfTime($timeArr){
+            $seconds = 0;
+            foreach ($timeArr as $time)
+            {
+                list($hour,$minute,$second) = explode(':', $time);
+                $seconds += $hour*3600;
+                $seconds += $minute*60;
+                $seconds += $second;
+            }
+            $hours = floor($seconds/3600);
+            $seconds -= $hours*3600;
+            $minutes  = floor($seconds/60);
+            $seconds -= $minutes*60;
+            if($seconds <= 9)
+                $seconds = "0".$seconds;
+            if($minutes <= 9)
+                $minutes = "0".$minutes;
+            if($hours <= 9)
+                $hours = "0".$hours;
+            return  "{$hours}:{$minutes}:{$seconds}";
+        }
+        @endphp
+
+            <div class="panel-heading">
+                <b>{{$empDatas == null ? 'List' : $empDatas[0]->name}}</b>
+                <p class="pull-right">
+                    From : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }} </b>  |  
+                    To : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($endDate)) : "" }} </b>
+                </p>
+            </div>
             <div class="panel-body">
                 <table class="table table-bordered">
                     <thead>
@@ -45,7 +82,6 @@
                             <th>Entry Time</th>
                             <th>Late Entry</th>
                             <th>Exit Time</th>
-                            
                             <th>Total Time</th>
                             <th>Worked Time</th>
                             <th>Total Break Time</th>
@@ -55,10 +91,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $i = 1 @endphp
-                        @forelse($empDatas as $empData)
+                        @php 
+                            $tempEntryTimeArr = []; 
+                            $tempExitTimeArr = []; 
+                            $tempTotalTimeArr = []; 
+                            $tempTotalWorkedTimeArr = []; 
+                            $tempTotalBreakTimeArr = [];
+                            $tempTotalBreakArr = [];
+                            
+                            $tempEarlyEntryTimeArr = []; 
+                            $tempLateEntryTimeArr = []; 
+                            $tot = 0;
+                        @endphp
+                        @forelse($empDatas as $index => $empData)
                             <tr>
-                                <td>{{$i}}</td>
+                                <td>{{$index+1}}</td>
                                 <td>{{$empData->day}}</td>
                                 <td>{{date('d-m-Y', strtotime($empData->date))}}</td>
                                 <td class="{{$empData->attendance=="Absent" ? 'text-danger' : 'text-success'}}">{{$empData->attendance}}</td>
@@ -71,12 +118,73 @@
                                 <td>{{ $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? "Not Thumb" : "-" : "-"}}</td>
                                 <td>{{$empData->note}}</td>
                             </tr>
-                            @php $i++ @endphp
+                            @php
+                                $empData->attendance != "Absent" ? $tempEntryTimeArr[] =  strtotime($empData->officeIn) : "";
+                                $empData->attendance != "Absent" ? $tempExitTimeArr[] =  strtotime($empData->officeOut) : "";
+                                $tempTotalTimeArr[] =  $empData->total_time;
+                                $tempTotalWorkedTimeArr[] = $empData->worked_time;
+                                $tempTotalBreakTimeArr[] = $empData->total_break_time;
+                                
+                                if(strpos($empData->LE, '-') !== false){
+                                    $EEdata = str_replace('-', '', $empData->LE);
+                                    $tempEarlyEntryTimeArr[] = strtotime($EEdata);
+                                }else{
+                                    $LEdata = str_replace('-', '', $empData->LE);
+                                    $tempLateEntryTimeArr[] =  strtotime($LEdata);
+                                }
+                                
+                                if ($empData->attendance=="Absent") {
+                                    $tempTotalBreakArr[] = date('d-m-Y', strtotime($empData->date));
+                                }
+                                
+                            @endphp
                         @empty
                             <tr>
                                 <td colspan="12" align="center"></td>
                             </tr>
                         @endforelse
+                    </tbody>
+                    {{-- 
+                    <tfoot>
+                        <tr>
+                            <th colspan="4">Average Time</th>
+                            <th>{{ date('H:i:s', array_sum($tempEntryTimeArr)/count($tempEntryTimeArr)) }}</th>
+                            <th>EE/LE : {{ date('H:i:s', array_sum($tempEarlyEntryTimeArr))." / ".date('H:i:s', array_sum($tempLateEntryTimeArr)) }}</th>
+                            <th>{{ date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr)) }}</th>
+                            <th>{{ sumOfTime($tempTotalTimeArr) }}</th>
+                            <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
+                            <th>{{ sumOfTime($tempTotalBreakTimeArr) }}</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot> 
+                    --}}
+                </table>
+                <legend>Report Card | <small><u>From</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}</b> <u>To</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}</b></small></legend>
+                <table class="table" id="tblreport">
+                    <thead class="bg-warning">
+                        <tr>
+                            <th>Avg. Entry Time</th>
+                            <th>Avg. Exit Time</th>
+                            <th>Total Late Time</th>
+                            <th>Total Early Time</th>
+                            <th>Total Worked Time</th>
+                            <th>Total Break Time</th>
+                            <th>Total Time</th>
+                            <th>Total Leaves</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>{{ date('H:i:s', array_sum($tempEntryTimeArr)/count($tempEntryTimeArr)) }}</th>
+                            <th>{{ date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr)) }}</th>
+                            <th>{{ date('H:i:s', array_sum($tempLateEntryTimeArr)) }}</th>
+                            <th>{{ date('H:i:s', array_sum($tempEarlyEntryTimeArr)) }}</th>
+                            <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
+                            <th>{{ sumOfTime($tempTotalBreakTimeArr) }}</th>
+                            <th>{{ sumOfTime($tempTotalTimeArr) }}</th>
+                            <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -84,16 +192,14 @@
             <div class="list-group">
                 {{-- {{ceil(array_sum($ExitTimeArr)/count($ExitTimeArr))}} --}}
                 <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}} 
-                    <p class="pull-right"><b>Total Late Time : </b>
-                        <span class="badge">{{isset($totalLETime) ? $totalLETime : ""}}</span>
-                    </p>
-                    
-                    <p class="pull-right"><b>Average Entry Time : </b>
-                    <span class="badge"></span>
+                    <p class="pull-right">
+                        From : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }} </b>  |  
+                        To : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($endDate)) : "" }} </b>
                     </p>
                 </a>
             </div>
         </div>
+        @endif
     {{-- @endif --}}
 @endif
 @endsection
@@ -107,7 +213,7 @@
     <script>
     var bindDateRangeValidation = function (f, s, e) {
     if(!(f instanceof jQuery)){
-			console.log("Not passing a jQuery object");
+		console.log("Not passing a jQuery object");
     }
   
     var jqForm = f,

@@ -16,7 +16,6 @@
                         <th>Email</th>
                         <th>Contact</th>
                         <th>Department</th>
-                        <th>Chat id</th>
                         <th>Action</th>
                     </tr>
                     @php $no = 1; @endphp
@@ -27,7 +26,6 @@
                         <td>{{ $employee->user->email }}</td>
                         <td>{{ $employee->contact }}</td>
                         <td>{{ $employee->department->name }}</td>
-                        <td>{{ $employee->chat_id }}</td>
                         <td>
                             <a class="btn btn-primary btn-xs edit" data-tr="{{ $employee }}">Edit</a>
                             <a class="btn btn-danger btn-xs" onclick="$('#deleteForm{{$employee->id}}').submit();">Delete</a>
@@ -60,12 +58,12 @@
                     </div>
                     <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}" id="pass_id">
                             <label for="password">Password:</label>
-                            <input type="password" class="form-control" name="password" id="password" value="{{ old('password')}}" placeholder="Enter Password" required autofocus>
+                            <input type="password" class="form-control" name="password" id="password" value="{{ old('password')}}" placeholder="Enter Password" required >
                             <small class="text-danger">{{ $errors->first('password') }}</small>
                         </div>
                     <div class="form-group{{ $errors->has('confirm_password') ? ' has-error' : '' }}" id="c_pass">
                             <label for="confirm_password">Confirm Password:</label>
-                            <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required autofocus>
+                            <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required >
                             <small class="text-danger">{{ $errors->first('confirm_password') }}</small>
                         </div>    
                     <div class="form-group">
@@ -78,20 +76,15 @@
                       </div> 
                     <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}" id="email_div">
                         <label for="email">Email:</label>
-                        <input type="text" class="form-control" name="email" id="email" value="{{ old('email')}}" placeholder="Enter Email" required autofocus>
+                        <input type="text" class="form-control" name="email" id="email" value="{{ old('email')}}" placeholder="Enter Email" required >
                         <small class="text-danger">{{ $errors->first('email') }}</small>
                     </div>
                     <div class="form-group{{ $errors->has('contact') ? ' has-error' : '' }}">
                         <label for="contact">Contact:</label>
-                        <input type="text" class="form-control" name="contact" id="contact" value="{{ old('contact')}}" placeholder="Enter Mobile Number" required autofocus>
+                        <input type="text" class="form-control" name="contact" id="contact" value="{{ old('contact')}}" placeholder="Enter Mobile Number" required >
                         <small class="text-danger">{{ $errors->first('contact') }}</small>
                     </div>
-                    <div class="form-group{{ $errors->has('chat_id') ? ' has-error' : '' }}">
-                        <label for="chat_id">Chat Id:</label>
-                        <input type="text" class="form-control" name="chat_id" id="chat_id" value="{{ old('name')}}" placeholder="Enter Chat ID" required autofocus>
-                        <small class="text-danger">{{ $errors->first('name') }}</small>
-                    </div>
-                    <div class="pull-right">
+                     <div class="pull-right">
                         <button type="submit" class="btn btn-primary">Save</button>
                         <button type="reset" class="btn btn-default" id="reset1">Reset</button>
                     </div>
@@ -110,7 +103,6 @@
         $('#name').val(employee.name);
         $('#department_id').val(employee.department_id);
         $('#contact').val(employee.contact);
-        $('#chat_id').val(employee.chat_id);
         $('#email').val(employee.email).prop("readonly", true);
         $("#pass_id, #c_pass").remove();
     });

@@ -272,9 +272,6 @@ class AttendanceReportController extends Controller
             $endDate = $request->endDate;
             $employee = $request->employee;
             
-            $EntryTimeArr = [];
-            $ExitTimeArr = [];
-    
             $employees = AttendanceReport::select('name')->groupBy('name')->get();
             $empDatas = AttendanceReport::where('name', $request->employee)
                                         // ->where('LE', 'NOT LIKE',  "-%")
@@ -287,32 +284,18 @@ class AttendanceReportController extends Controller
                 list( $g, $i, $s ) = explode( ':', $empData->LE );
                 $seconds += $g * 3600;
                 $seconds += $i * 60;
-                $seconds += $s;
-                
+                $seconds += $s;   
+            
                 $empData['day'] = date('l', strtotime($empData->date));
-                // array_push($empDatas, $empData['day']);
-
-                // $tempCalcData['officeIn'] = strtotime($empData->officeIn);
-                // $tempCalcData['officeOut'] = strtotime($empData->officeOut);
-                // $tempCalcData['LE'] = strtotime($empData->LE);
-                array_push($EntryTimeArr, $empData->officeIn);
-                array_push($ExitTimeArr, $empData->officeOut);
             }
-            // dd($calcData);
             $hours    = floor( $seconds / 3600 );
             $seconds -= $hours * 3600;
             $minutes  = floor( $seconds / 60 );
             $seconds -= $minutes * 60;
             // echo "{$hours}:{$minutes}:{$seconds}";
             $totalLETime = $hours.":".$minutes.":".$seconds;
-            // echo "<pre>";
-            // dd($empDatas->avg());
-            // dd();
             
-            
-
-
-            return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee', 'EntryTimeArr', 'ExitTimeArr'));
+            return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'));
         }catch(\Exception $ex){
             dd($ex);
             session()->flash('error','Error :  Something went wrong.');

@@ -38,7 +38,7 @@
     {{-- @if($empDatas->isNotEmpty()) --}}
         <div class="panel panel-primary">
             <!-- Default panel contents -->
-        @if(count($empDatas) > 0) 
+        @if(count($empDatas) > 0)
 
         @php
         function sumOfTime($timeArr){
@@ -67,7 +67,7 @@
             <div class="panel-heading">
                 <b>{{$empDatas == null ? 'List' : $empDatas[0]->name}}</b>
                 <p class="pull-right">
-                    From : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }} </b>  |  
+                    From : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }} </b>  |
                     To : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($endDate)) : "" }} </b>
                 </p>
             </div>
@@ -86,21 +86,23 @@
                             <th>Worked Time</th>
                             <th>Total Break Time</th>
                             <th>Thumb</th>
-
+                            <th>OverTime</th>
                             <th>Note</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @php 
-                            $tempEntryTimeArr = []; 
-                            $tempExitTimeArr = []; 
-                            $tempTotalTimeArr = []; 
-                            $tempTotalWorkedTimeArr = []; 
+                        @php
+                            $tempEntryTimeArr = [];
+                            $tempExitTimeArr = [];
+                            $tempTotalTimeArr = [];
+                            $tempTotalWorkedTimeArr = [];
                             $tempTotalBreakTimeArr = [];
                             $tempTotalBreakArr = [];
-                            
-                            $tempEarlyEntryTimeArr = []; 
-                            $tempLateEntryTimeArr = []; 
+                            $tempEarlyEntryTimeArr = [];
+                            $tempLateEntryTimeArr = [];
+                            $tempDutyTime=[];
+                            $tempOverTime=[];
+                            $tempLessTime=[];
                             $tot = 0;
                         @endphp
                         @forelse($empDatas as $index => $empData)
@@ -116,6 +118,7 @@
                                 <td>{{$empData->worked_time=="00:00:00" ? "-" : $empData->worked_time}}</td>
                                 <td>{{$empData->total_break_time=="00:00:00" ? "-" : $empData->total_break_time}}</td>
                                 <td>{{ $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? "Not Thumb" : "-" : "-"}}</td>
+                                <td>{{ $empData->OT}}</td>
                                 <td>{{$empData->note}}</td>
                             </tr>
                             @php
@@ -124,7 +127,9 @@
                                 $tempTotalTimeArr[] =  $empData->total_time;
                                 $tempTotalWorkedTimeArr[] = $empData->worked_time;
                                 $tempTotalBreakTimeArr[] = $empData->total_break_time;
-                                
+                                $tempDutyTime[]=$empData->employee->company->dutyTime;
+                                strpos($empData->OT,'-')==false ? $tempOverTime[]=$empData->OT : "";
+
                                 if(strpos($empData->LE, '-') !== false){
                                     $EEdata = str_replace('-', '', $empData->LE);
                                     $tempEarlyEntryTimeArr[] = strtotime($EEdata);
@@ -132,11 +137,11 @@
                                     $LEdata = str_replace('-', '', $empData->LE);
                                     $tempLateEntryTimeArr[] =  strtotime($LEdata);
                                 }
-                                
+
                                 if ($empData->attendance=="Absent") {
                                     $tempTotalBreakArr[] = date('d-m-Y', strtotime($empData->date));
                                 }
-                                
+
                             @endphp
                         @empty
                             <tr>
@@ -144,21 +149,6 @@
                             </tr>
                         @endforelse
                     </tbody>
-                    {{-- 
-                    <tfoot>
-                        <tr>
-                            <th colspan="4">Average Time</th>
-                            <th>{{ date('H:i:s', array_sum($tempEntryTimeArr)/count($tempEntryTimeArr)) }}</th>
-                            <th>EE/LE : {{ date('H:i:s', array_sum($tempEarlyEntryTimeArr))." / ".date('H:i:s', array_sum($tempLateEntryTimeArr)) }}</th>
-                            <th>{{ date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr)) }}</th>
-                            <th>{{ sumOfTime($tempTotalTimeArr) }}</th>
-                            <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
-                            <th>{{ sumOfTime($tempTotalBreakTimeArr) }}</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </tfoot> 
-                    --}}
                 </table>
                 <legend>Report Card | <small><u>From</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}</b> <u>To</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}</b></small></legend>
                 <table class="table" id="tblreport">
@@ -171,7 +161,7 @@
                             <th>Total Worked Time</th>
                             <th>Total Break Time</th>
                             <th>Total Time</th>
-                            <th>Total Leaves</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -183,6 +173,19 @@
                             <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
                             <th>{{ sumOfTime($tempTotalBreakTimeArr) }}</th>
                             <th>{{ sumOfTime($tempTotalTimeArr) }}</th>
+
+                        </tr>
+                    </tbody>
+                    <thead class="bg-warning">
+                        <tr>
+                            <th>Total DutyTime</th>
+                            <th>Total Leaves</th>
+                            <th></th><th></th><th></th><th></th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>{{ sumOfTime($tempDutyTime) }}</th>
                             <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
                         </tr>
                     </tbody>
@@ -191,9 +194,9 @@
             <!-- List group -->
             <div class="list-group">
                 {{-- {{ceil(array_sum($ExitTimeArr)/count($ExitTimeArr))}} --}}
-                <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}} 
+                <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}}
                     <p class="pull-right">
-                        From : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }} </b>  |  
+                        From : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }} </b>  |
                         To : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($endDate)) : "" }} </b>
                     </p>
                 </a>

@@ -8,7 +8,7 @@
     <div class="col-md-6">
         <div class="panel panel-primary">
             <div class="panel-heading">Employee List</div>
-            <div class="panel-body">    
+            <div class="panel-body">
                 <table class="table">
                     <tr>
                         <th>No</th>
@@ -65,7 +65,7 @@
                             <label for="confirm_password">Confirm Password:</label>
                             <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required >
                             <small class="text-danger">{{ $errors->first('confirm_password') }}</small>
-                        </div>    
+                        </div>
                     <div class="form-group">
                         <label for="department">Department:</label>
                         <select class="form-control" id="department_id" name="department_id">
@@ -73,7 +73,7 @@
                                 <option value="{{$department->id}}">{{$department->name}}</option>
                             @endforeach
                         </select>
-                      </div> 
+                      </div>
                     <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}" id="email_div">
                         <label for="email">Email:</label>
                         <input type="text" class="form-control" name="email" id="email" value="{{ old('email')}}" placeholder="Enter Email" required >
@@ -88,9 +88,9 @@
                         <button type="submit" class="btn btn-primary">Save</button>
                         <button type="reset" class="btn btn-default" id="reset1">Reset</button>
                     </div>
-                </form> 
+                </form>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
 @endsection

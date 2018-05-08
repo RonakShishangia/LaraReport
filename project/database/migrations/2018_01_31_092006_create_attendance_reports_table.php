@@ -16,7 +16,6 @@ class CreateAttendanceReportsTable extends Migration
         Schema::create('attendance_reports', function (Blueprint $table) {
             $table->increments('id');
             $table->date('date')->nullabe();
-            $table->integer('employee_id')->unsigned();
             $table->string('name')->nullable();
             $table->string('department')->nullable();
             $table->time('officeIn')->nullable();

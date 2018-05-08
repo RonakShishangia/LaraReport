@@ -10,4 +10,9 @@ class AttendanceReport extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 }

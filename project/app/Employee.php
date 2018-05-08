@@ -8,16 +8,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Employee extends Model
 {
     use SoftDeletes;
-       
+
     protected $table="employees";
     protected $fillable=['name','password','department_id','email','contact','chat_id'];
 	protected $dates = ['deleted_at'];
-	
+
     public function department()
     {
         return $this->belongsTo('App\Department');
     }
-
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
     public function user()
     {
         return $this->belongsTo('App\User');

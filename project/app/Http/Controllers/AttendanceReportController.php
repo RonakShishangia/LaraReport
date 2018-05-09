@@ -167,7 +167,7 @@ class AttendanceReportController extends Controller
                     $attendanceReportDatas->breaks = json_encode($thumbs[$tmpLine[2]]['break']);
                     $attendanceReportDatas->note = $thumbs[$tmpLine[2]]['note'];
                     $attendanceReportDatas->not_thumb = $thumbs[$tmpLine[2]]['not_thumb'];
-                    return view('emails.dailyReportMail',compact('attendanceReportDatas'));
+                    // return view('emails.dailyReportMail',compact('attendanceReportDatas'));
                     $attendanceReportDatas->save();
                     \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                 }

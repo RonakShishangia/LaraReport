@@ -4,15 +4,15 @@
 @endsection
 @section('content')
 <div class="row">
-    
+
     <div class="col-md-6">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <strong class="panel-title">Company Details</strong>
-                @if(count($company)>0) <button type="button" name="edit" id="edit" class="pull-right btn btn-info btn-sm" data-company="{{ $company }}">Edit Info</button> @endif
+                @if($company!=null) <button type="button" name="edit" id="edit" class="pull-right btn btn-info btn-sm" data-company="{{ $company }}">Edit Info</button> @endif
             </div>
             <div class="panel-body">
-                @if(count($company)>0)
+                @if($company!=null)
                     <legend class="text-primary">{{ $company->name }}</legend>
                     <address class="">
                         <strong>Email:</strong> {{ $company->email }}<br>

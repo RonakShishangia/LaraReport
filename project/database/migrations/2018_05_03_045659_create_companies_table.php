@@ -16,7 +16,7 @@ class CreateCompaniesTable extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->email('email');
+            $table->string('email');
             $table->time('startTime')->nullable();
             $table->time('endTime')->nullable();
             $table->time('dutyTime')->nullable();

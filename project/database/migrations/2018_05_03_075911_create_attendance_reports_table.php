@@ -15,6 +15,7 @@ class CreateAttendanceReportsTable extends Migration
     {
         Schema::create('attendance_reports', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('employee_id')->unsigned();
             $table->date('date')->nullabe();
             $table->string('name')->nullable();
             $table->string('department')->nullable();
@@ -28,6 +29,8 @@ class CreateAttendanceReportsTable extends Migration
             $table->longText('thumbs')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('employee_id')->references('id')->on('employees');
         });
     }
 

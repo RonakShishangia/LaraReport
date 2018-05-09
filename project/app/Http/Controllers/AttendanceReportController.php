@@ -47,6 +47,8 @@ class AttendanceReportController extends Controller
                     $tmpArray = explode(';', str_replace($search_string, $replace_string, rtrim($tmpLine[18], ';')));
 
                     $employee=Employee::where('name','=',strtoupper($tmpLine[2]))->first();
+                    if(!($employee))
+                      continue;
                     $companyStartTime = $employee->company->startTime;
                     $companyEndTime = $employee->company->endTime;
                     $companyDutyTime = $employee->company->dutyTime;

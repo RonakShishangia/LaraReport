@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6 col-sm-12">
         <div class="panel panel-primary">
             <div class="panel-heading">Employee List</div>
             <div class="panel-body">
@@ -19,7 +19,7 @@
                         <th>Action</th>
                     </tr>
                     @php $no = 1; @endphp
-                    @forelse ($employees as $employee)
+                    @forelse($employees as $employee)
                     <tr>
                         <td>{{ $no }}</td>
                         <td>{{ $employee->user->name }}</td>
@@ -41,10 +41,11 @@
                         </tr>
                     @endforelse
                 </table>
+                <div class="pull-right"><?php echo $employees->links(); ?></div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">Employee Details</div>
             <div class="panel-body">

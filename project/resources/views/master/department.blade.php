@@ -35,6 +35,7 @@
                         </tr>
                     @endforelse
                 </table>
+                <?php echo $departments->links(); ?>
             </div>
         </div>
     </div>

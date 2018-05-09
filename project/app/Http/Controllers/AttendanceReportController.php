@@ -9,6 +9,7 @@ use App\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Excel;
+use App\Mail\DailyReportMail;
 
 class AttendanceReportController extends Controller
 {
@@ -143,10 +144,6 @@ class AttendanceReportController extends Controller
                     $tmpLine[10] = str_replace('(SE)', '', $tmpLine[10]);
                     $tmpLine[11] = str_replace('(SE)', '', $tmpLine[11]);
                     $tmpLine[14] = str_replace('0-', '00:', $tmpLine[14]);
-                    // echo "<pre>";
-                    // print_r($thumbs[$tmpLine[2]]['break']);
-                    // dd();
-
                     // add data to database
                     $attendanceReportDatas = new AttendanceReport();
                     $attendanceReportDatas->employee_id = $employee->id;
@@ -170,7 +167,9 @@ class AttendanceReportController extends Controller
                     $attendanceReportDatas->breaks = json_encode($thumbs[$tmpLine[2]]['break']);
                     $attendanceReportDatas->note = $thumbs[$tmpLine[2]]['note'];
                     $attendanceReportDatas->not_thumb = $thumbs[$tmpLine[2]]['not_thumb'];
+                    // return view('emails.dailyReportMail',compact('attendanceReportDatas'));
                     $attendanceReportDatas->save();
+                    \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                 }
                 //return response()->json($thumbs);
                 return redirect('/');
@@ -278,7 +277,7 @@ class AttendanceReportController extends Controller
     // get selected employee
     public function getEmpReport(Request $request) {
         try{
-            $seconds = "";
+            $seconds = 0;
             $startDate = $request->startDate;
             $endDate = $request->endDate;
             $employee = $request->employee;
@@ -292,7 +291,7 @@ class AttendanceReportController extends Controller
                 $tempCalcData = [];
                 // $sum1 = str_replace('-', '', $empData->LE);
                 // $sum += strtotime($sum1);
-                list( $g, $i, $s ) = explode( ':', $empData->LE );
+                list( $g, $i, $s ) = explode(":",$empData->LE);
                 $seconds += $g * 3600;
                 $seconds += $i * 60;
                 $seconds += $s;

@@ -1,5 +1,9 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{"Nkonnect infoway"}}</title>
 	<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/toastr.css')}}" >
@@ -66,7 +70,7 @@
 				{{-- <ul class="nav navbar-nav navbar-right">
 						<li>
 							<a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"> Logout </a>
-							<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }} 
+							<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;"> {{ csrf_field() }}
 							</form>
 						</li>
 						<li><a href="#"><span class="glyphicon glyphicon-user"></span> {{ Auth::user()->name }}</a></li>

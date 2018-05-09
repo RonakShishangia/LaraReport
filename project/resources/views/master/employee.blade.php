@@ -9,7 +9,7 @@
         <div class="panel panel-primary">
             <div class="panel-heading">Employee List</div>
             <div class="panel-body">
-                <table class="table">
+                <table class="table table-bordered">
                     <tr>
                         <th>No</th>
                         <th>Name</th>

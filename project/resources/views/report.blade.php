@@ -100,9 +100,12 @@
                             $tempTotalBreakArr = [];
                             $tempEarlyEntryTimeArr = [];
                             $tempLateEntryTimeArr = [];
+                            $tempOTTimeArr = [];
+                            $tempLessOTTimeArr = [];
                             $tempDutyTime=[];
                             $tempOverTime=[];
                             $tempLessTime=[];
+                            $tempNotThumb=[];
                             $tot = 0;
                         @endphp
                         @forelse($empDatas as $index => $empData)
@@ -117,7 +120,7 @@
                                 <td>{{$empData->total_time=="00:00:00" ? "-" : $empData->total_time}}</td>
                                 <td>{{$empData->worked_time=="00:00:00" ? "-" : $empData->worked_time}}</td>
                                 <td>{{$empData->total_break_time=="00:00:00" ? "-" : $empData->total_break_time}}</td>
-                                <td>{{ $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? "Not Thumb" : "-" : "-"}}</td>
+                                <td>{{ $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? "Not Thumb" : "-" : "-" }}</td>
                                 <td>{{ $empData->OT}}</td>
                                 <td>{{$empData->note}}</td>
                             </tr>
@@ -128,7 +131,10 @@
                                 $tempTotalWorkedTimeArr[] = $empData->worked_time;
                                 $tempTotalBreakTimeArr[] = $empData->total_break_time;
                                 $tempDutyTime[]=$empData->employee->company->dutyTime;
-                                strpos($empData->OT,'-')==false ? $tempOverTime[]=$empData->OT : "";
+                                
+                                strpos($empData->OT,'-')!==false ? $tempLessTime[]=str_replace('-', '', $empData->OT) : $tempOverTime[]=$empData->OT;
+
+                                $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? $tempNotThumb[]=date('d-m-Y', strtotime($empData->date)) : "" : "";
 
                                 if(strpos($empData->LE, '-') !== false){
                                     $EEdata = str_replace('-', '', $empData->LE);
@@ -137,7 +143,7 @@
                                     $LEdata = str_replace('-', '', $empData->LE);
                                     $tempLateEntryTimeArr[] =  strtotime($LEdata);
                                 }
-
+                                
                                 if ($empData->attendance=="Absent") {
                                     $tempTotalBreakArr[] = date('d-m-Y', strtotime($empData->date));
                                 }
@@ -158,7 +164,7 @@
                             <th>Avg. Exit Time</th>
                             <th>Total Late Time</th>
                             <th>Total Early Time</th>
-                            <th>Total Worked Time</th>
+                            <th>Total Worked Time / Total Duty Time</th>
                             <th>Total Break Time</th>
                             <th>Total Time</th>
 
@@ -170,7 +176,7 @@
                             <th>{{ date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr)) }}</th>
                             <th>{{ date('H:i:s', array_sum($tempLateEntryTimeArr)) }}</th>
                             <th>{{ date('H:i:s', array_sum($tempEarlyEntryTimeArr)) }}</th>
-                            <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
+                            <th>{{ sumOfTime($tempTotalWorkedTimeArr)." / ".sumOfTime($tempDutyTime) }}</th>
                             <th>{{ sumOfTime($tempTotalBreakTimeArr) }}</th>
                             <th>{{ sumOfTime($tempTotalTimeArr) }}</th>
 
@@ -178,15 +184,17 @@
                     </tbody>
                     <thead class="bg-warning">
                         <tr>
-                            <th>Total DutyTime</th>
+                            <th>Less Duty Time / OT </th>
                             <th>Total Leaves</th>
-                            <th></th><th></th><th></th><th></th><th></th>
+                            <th>Total Not Thumb</th>
+                            <th></th><th></th><th></th><th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th>{{ sumOfTime($tempDutyTime) }}</th>
+                            <th><span class='text-danger'>{{ sumOfTime($tempLessTime) }}</span> / <span class="text-success">{{sumOfTime($tempOverTime)}}</span> </th>
                             <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
+                            <th>{{ count($tempNotThumb) }}</th>
                         </tr>
                     </tbody>
                 </table>

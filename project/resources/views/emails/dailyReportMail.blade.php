@@ -17,7 +17,7 @@
     <body>
         {{-- {{ dd($attendanceReportDatas) }} --}}
         <h1>NKonnect Infoway Pvt. Ltd.</h1>
-        <h3>Daily Attendance Report Notificaton</h3>
+        <h3>Daily Attendance Report Notification</h3>
         <table border="1">
             <thead>
                 <tr>
@@ -36,32 +36,36 @@
                     <td>Attendance</td>
                     <td colspan="6">{{ $attendanceReportDatas->attendance }}</td>
                 </tr>
-                <tr>
-                    <th colspan="7">Attendence Report</th>
-                </tr>
+                @if($attendanceReportDatas->attendance == "Present")
+                    <tr>
+                        <th colspan="7">Attendence Report</th>
+                    </tr>
+                @endif
             </thead>
-            <thead style="background:#f0ad4e">
-                <tr>
-                    <td>OfficeIn</td>
-                    <td>OfficeOut</td>
-                    <td>Break Time</td>
-                    <td>Worked Time</td>
-                    <td>Total Time</td>
-                    <td style="background:{{strpos($attendanceReportDatas->LE,'-')!==false ? '#00ff00' : '#ff0000' }}">Late/Early</td>
-                    <td style="background:{{strpos($attendanceReportDatas->OT,'-')!==false ? '#ff0000' : '#00ff00' }}">OT</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ $attendanceReportDatas->officeIn }}</td>
-                    <td>{{ $attendanceReportDatas->officeOut }}</td>
-                    <td>{{ $attendanceReportDatas->total_break_time }}</td>
-                    <td>{{ $attendanceReportDatas->worked_time }}</td>
-                    <td>{{ $attendanceReportDatas->total_time }}</td>
-                    <td>{{ $attendanceReportDatas->LE }}</td>
-                    <td>{{ $attendanceReportDatas->OT }}</td>
-                </tr>
-            </tbody>
+            @if($attendanceReportDatas->attendance == "Present")
+                <thead style="background:#f0ad4e">
+                    <tr>
+                        <td>OfficeIn</td>
+                        <td>OfficeOut</td>
+                        <td>Break Time</td>
+                        <td>Worked Time</td>
+                        <td>Total Time</td>
+                        <td style="background:{{strpos($attendanceReportDatas->LE,'-')!==false ? '#00ff00' : '#ff0000' }}">Late/Early</td>
+                        <td style="background:{{strpos($attendanceReportDatas->OT,'-')!==false ? '#ff0000' : '#00ff00' }}">OT</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ $attendanceReportDatas->officeIn }}</td>
+                        <td>{{ $attendanceReportDatas->officeOut }}</td>
+                        <td>{{ $attendanceReportDatas->total_break_time }}</td>
+                        <td>{{ $attendanceReportDatas->worked_time }}</td>
+                        <td>{{ $attendanceReportDatas->total_time }}</td>
+                        <td>{{ $attendanceReportDatas->LE }}</td>
+                        <td>{{ $attendanceReportDatas->OT }}</td>
+                    </tr>
+                </tbody>
+            @endif
         </table>
     </body>
 </html>

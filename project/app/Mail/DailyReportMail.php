@@ -30,6 +30,7 @@ class DailyReportMail extends Mailable
     public function build()
     {
         $attendanceReportDatas=$this->report;
-        return $this->view('emails.dailyReportMail',compact('attendanceReportDatas'));
+        return $this->subject(date('d-m-Y', strtotime($attendanceReportDatas->date))." Attendance Report Notificaton")
+        ->view('emails.dailyReportMail',compact('attendanceReportDatas'));
     }
 }

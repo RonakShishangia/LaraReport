@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta id="csrf-token" name="csrf-token" content="{{ csrf_token() }}">
 	<title>{{"Nkonnect infoway"}}</title>
 	<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/toastr.css')}}" >
@@ -113,6 +114,11 @@
 	<script src="{{ asset('js/app.js') }}"></script>
 	<script src="{{ asset('js/toastr.min.js') }}"></script>
 	<script>
+		$.ajaxSetup({
+    		headers: {
+    			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    		}
+    	});
 		/**
 		 * Toster notification Config
 		 */

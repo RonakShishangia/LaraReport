@@ -130,7 +130,7 @@ class AttendanceReportController extends Controller
                             if(strtotime($thumbs[$tmpLine[2]]['worked_time']) > strtotime($companyDutyTime))
                                 $overTime = gmdate('H:i:s', abs($ot));
                             elseif(strtotime($thumbs[$tmpLine[2]]['worked_time']) < strtotime($companyDutyTime))
-                                $overTime = '-'.gmdate('H:i:s', abs($ot));
+                                $overTime = '-'.gmdate('H:i:s', $ot);
                             else
                                 $overTime = "00:00:00";
                         // }
@@ -269,7 +269,7 @@ class AttendanceReportController extends Controller
     }
 
     public function searchemp(){
-        $employees = AttendanceReport::select('name')->groupBy('name')->get();
+        $employees = Employee::get();
         $empDatas = [];
         return view('report', compact('employees', 'empDatas'));
     }
@@ -282,10 +282,10 @@ class AttendanceReportController extends Controller
             $endDate = $request->endDate;
             $employee = $request->employee;
 
-            $employees = AttendanceReport::select('name')->groupBy('name')->get();
-            $empDatas = AttendanceReport::where('name', $request->employee)
+            $employees = Employee::get();
+            $empDatas = AttendanceReport::where('employee_id', $employee)
                                         // ->where('LE', 'NOT LIKE',  "-%")
-                                        ->whereBetween('date', [$request->startDate, $request->endDate])
+                                        ->whereBetween('date', [$startDate, $endDate])
                                         ->orderBy('date', 'asc')->get();
             foreach($empDatas as $empData){
                 $tempCalcData = [];
@@ -304,7 +304,10 @@ class AttendanceReportController extends Controller
             $seconds -= $minutes * 60;
             // echo "{$hours}:{$minutes}:{$seconds}";
             $totalLETime = $hours.":".$minutes.":".$seconds;
-
+            $tmpView = view('empreport', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'))->render();
+            return response()->json([
+                'tmp' => $tmpView,
+            ]);
             return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'));
         }catch(\Exception $ex){
             dd($ex);

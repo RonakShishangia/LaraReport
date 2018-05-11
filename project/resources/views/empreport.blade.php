@@ -24,6 +24,20 @@
             $hours = "0".$hours;
         return  "{$hours}:{$minutes}:{$seconds}";
     }
+    function subOfTime($worked,$duty){
+        $start    = explode(":",$worked);
+        $end  = explode(":",$duty);
+        $start = new DateInterval('PT'.$start[0]."H".$start[1]."M".$start[2]."S");
+        $end = new DateInterval('PT'.$end[0]."H".$end[1]."M".$end[2]."S");
+        $startTime=new DateTime();
+        $startTime->add($start);
+        $endTime=new DateTime();
+        $endTime->add($end);
+        $diff=$endTime->diff($startTime);
+        $final = $diff->format("%H:%I:%S");
+        return $endTime > $startTime ? "-".$final : $final;
+        echo $final;
+    }
     @endphp
 
         <div class="panel-heading">
@@ -92,8 +106,8 @@
                             $tempTotalTimeArr[] =  $empData->total_time;
                             $tempTotalWorkedTimeArr[] = $empData->worked_time;
                             $tempTotalBreakTimeArr[] = $empData->total_break_time;
-                            $tempDutyTime[]=$empData->employee->company->dutyTime;
-                            
+                            $empData->attendance!="Absent" ? $tempDutyTime[]=$empData->employee->company->dutyTime : "";
+
                             strpos($empData->OT,'-')!==false ? $tempLessTime[]=str_replace('-', '', $empData->OT) : $tempOverTime[]=$empData->OT;
 
                             $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? $tempNotThumb[]=date('d-m-Y', strtotime($empData->date)) : "" : "";
@@ -105,17 +119,33 @@
                                 $LEdata = str_replace('-', '', $empData->LE);
                                 $tempLateEntryTimeArr[] =  strtotime($LEdata);
                             }
-                            
+
                             if ($empData->attendance=="Absent") {
                                 $tempTotalBreakArr[] = date('d-m-Y', strtotime($empData->date));
                             }
-
                         @endphp
                     @empty
                         <tr>
                             <td colspan="12" align="center"></td>
                         </tr>
                     @endforelse
+                    <tfoot>
+                        <tr class="bg-info">
+                            <th>NO.</th>
+                            <th>Day</th>
+                            <th>Date</th>
+                            <th>Attendance</th>
+                            <th>Entry Time</th>
+                            <th>Late Entry</th>
+                            <th>Exit Time</th>
+                            <th>Total Time</th>
+                            <th>Worked Time</th>
+                            <th>Total Break Time</th>
+                            <th>Thumb</th>
+                            <th>OverTime</th>
+                            <th>Note</th>
+                        </tr>
+                    </tfoot>
                 </tbody>
             </table>
             <legend>Report Card | <small><u>From</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}</b> <u>To</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}</b></small></legend>
@@ -126,10 +156,8 @@
                         <th>Avg. Exit Time</th>
                         <th>Total Late Time</th>
                         <th>Total Early Time</th>
-                        <th>Total Worked Time / Total Duty Time</th>
                         <th>Total Break Time</th>
                         <th>Total Time</th>
-
                     </tr>
                 </thead>
                 <tbody>
@@ -138,7 +166,6 @@
                         <th>{{ date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr)) }}</th>
                         <th>{{ date('H:i:s', array_sum($tempLateEntryTimeArr)) }}</th>
                         <th>{{ date('H:i:s', array_sum($tempEarlyEntryTimeArr)) }}</th>
-                        <th>{{ sumOfTime($tempTotalWorkedTimeArr)." / ".sumOfTime($tempDutyTime) }} = 
                         <th>{{ sumOfTime($tempTotalBreakTimeArr) }}</th>
                         <th>{{ sumOfTime($tempTotalTimeArr) }}</th>
 
@@ -146,22 +173,25 @@
                 </tbody>
                 <thead class="bg-warning">
                     <tr>
-                        <th>OT - Less Duty Time = Total OT </th>
+                        <th>Total Duty Time</th>
+                        <th>Total Worked Time</th>
+                        <th>OT/Less Time</th>
                         <th>Total Leaves</th>
                         <th>Total Not Thumb</th>
-                        <th></th><th></th><th></th><th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <th>
-                            <span class="text-success">{{sumOfTime($tempOverTime)}}</span> - <span class='text-danger'>{{ sumOfTime($tempLessTime) }}</span> = 
-
-                            {{ strtotime(gmdate('H:i:s', abs(strtotime(sumOfTime($tempLessTime)) - strtotime(sumOfTime($tempOverTime))))) < strtotime(sumOfTime($tempOverTime)) ?  "-".gmdate('H:i:s', abs(strtotime(sumOfTime($tempLessTime)) - strtotime(sumOfTime($tempOverTime)))) : gmdate('H:i:s', abs(strtotime(sumOfTime($tempLessTime)) - strtotime(sumOfTime($tempOverTime)))) }}
-                             {{-- {{ strtotime($thumbs[$tmpLine[2]]['officeIn']) < strtotime($companyStartTime)  }}  --}}
-                        </th> 
+                        <th>{{ sumOfTime($tempDutyTime) }}</th>
+                        <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
+                        {{-- <th>{{ sumOfTime($tempOverTime) }}</th> --}}
+                        <th>{{ subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime)) }}</th>
+                        {{-- <th>{{ subOfTime(sumOfTime($tempOverTime),sumOfTime($tempLessTime)) }}</th> --}}
                         <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
                         <th>{{ count($tempNotThumb) }}</th>
+                        {{-- <th>{{ print_r($tempOverTime) }}</th>
+                        <th>{{ print_r($tempLessTime) }}</th> --}}
                     </tr>
                 </tbody>
             </table>

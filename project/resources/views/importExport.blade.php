@@ -38,7 +38,7 @@
 			<button type="button" class="btn btn-primary" id="resetDateFilter">Reset</button>
 		</div>
 	</div>
-	<hr>	
+	<hr>
 	<div class="table-responsive">
 		<table id="example" class="table table-striped table-bordered small" width="100%" cellspacing="0">
 			<thead>
@@ -82,7 +82,7 @@
 @endif
 @endsection
 
-@section('script')		
+@section('script')
 	<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
 	<script src="{{ asset('js/dataTables.bootstrap.min.js') }}"></script>
 	<script src="{{ asset('js/dataTables.fixedHeader.min.js') }}"></script>
@@ -97,7 +97,7 @@
 	<script src="{{ asset('js/vfs_fonts.js') }}"></script>
 	<script src="{{ asset('js/jszip.min.js') }}"></script>
 	<script src="{{ asset('js/buttons.flash.min.js') }}"></script>
-	
+
 	<script>
 		var table='';
 		$(document).ready(function() {
@@ -113,7 +113,7 @@
 					{ data: "date", name: 'date' },
 					{ data: "name", name: "name" },
 					{ data: "department", name: "department" },
-					{ data: "officeIn", name: "officeIn", 
+					{ data: "officeIn", name: "officeIn",
 						render:function (data, type, row) {
 							if(data == "00:00:00"){
 								return "<center>-</center>";
@@ -122,7 +122,7 @@
 							}
 						}
 					},
-					{ data: "officeOut", name: "officeOut", 
+					{ data: "officeOut", name: "officeOut",
 						render:function (data, type, row) {
 							if(data == "00:00:00"){
 								return "<center>-</center>";
@@ -136,11 +136,11 @@
 							if(data == "Absent"){
 								return "<center><span style='color:red;'>"+ data +"</span></center>";
 							}else{
-								return "<center><span style='color:green;'>"+ data +"</span></center>"; 
+								return "<center><span style='color:green;'>"+ data +"</span></center>";
 							}
-						} 
+						}
 					},
-					{ data: "total_time", name: "total_time", 
+					{ data: "total_time", name: "total_time",
 						render:function (data, type, row) {
 							if(data == "00:00:00"){
 								return "<center>-</center>";
@@ -149,7 +149,7 @@
 							}
 						}
 					},
-					{ data: "worked_time", name: "worked_time", 
+					{ data: "worked_time", name: "worked_time",
 						render:function (data, type, row) {
 							if(data == "00:00:00"){
 								return "<center>-</center>";
@@ -158,7 +158,7 @@
 							}
 						}
 					},
-					{ data: "total_break_time", name: "total_break_time", 
+					{ data: "total_break_time", name: "total_break_time",
 						render:function (data, type, row) {
 							if(data == "00:00:00"){
 								return "<center>-</center>";
@@ -178,9 +178,9 @@
 							}else{
 								return "<center><span style='color:green;'>OK</span></center>";
 							}
-						} 
+						}
 					},
-					{ data: "note", name: "note", 
+					{ data: "note", name: "note",
 						render:function (data, type, row) {
 							if(data == null){
 								var notes = "";
@@ -196,7 +196,7 @@
 							}
 						}
 					},
-					{ data: "LE", name: "LE", 
+					{ data: "LE", name: "LE",
 						render:function (data, type, row) {
 							if(data == "00:00:00"){
 								return "<center>-</center>";
@@ -209,7 +209,7 @@
 							}
 						}
 					},
-					{ data: "breaks", name: "breaks", 
+					{ data: "breaks", name: "breaks",
 						render:function (data, type, row) {
 							var d = JSON.parse(row.breaks);
 							var breakLenght = d.length;
@@ -251,7 +251,7 @@
 					});
 				}
 			});
-		} ); 
+		} );
 		$("#resetDateFilter").click(function(){
 			// $("#min-date").val('');
 			// $("#max-date").val('');
@@ -267,7 +267,7 @@
 			function(settings, data, dataIndex) {
 				var min = $('#min-date').val();
 				var max = $('#max-date').val();
-				var createdAt = data[0] || 0; // Our date column in the table		
+				var createdAt = data[0] || 0; // Our date column in the table
 				if (
 					(min == "" || max == "") ||
 					(moment(createdAt).isSameOrAfter(min) && moment(createdAt).isSameOrBefore(max))
@@ -281,19 +281,19 @@
 		$('.date-range-filter').change(function() {
 			table.draw();
 		});
-    
+
 		$('#my-table_filter').hide();
 
 		$('#import_file').change(function() {
-			var ext = $('#import_file').val().split('.').pop().toLowerCase(); 
-				if($.inArray(ext, ['csv']) == -1) { 
+			var ext = $('#import_file').val().split('.').pop().toLowerCase();
+				if($.inArray(ext, ['csv']) == -1) {
 					alert('invalid extension!');
 					$('#import_file').val('');
 					return false;
 				}else{
 					$("#csv-upload").click();
 				}
-				
+
 		});
 		function setDate() {
 			var subtractDate = (moment().weekday() == 1 ? -2 : -1);
@@ -307,9 +307,9 @@
 		function addNotes(userId, userName, userNote){
 			$("#userData").text(userName);
 			$("#userId").val(userId);
-			$("#adduserNote").val(userNote == "null" ? "" : userNote);	
+			$("#adduserNote").val(userNote == "null" ? "" : userNote);
 			// setDate();
-			// table.draw();		
+			// table.draw();
 		}
 
 	</script>

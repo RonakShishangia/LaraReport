@@ -89,7 +89,7 @@
                             <td>{{$index+1}}</td>
                             <td>{{$empData->day}}</td>
                             <td>{{date('d-m-Y', strtotime($empData->date))}}</td>
-                            <td class="{{$empData->attendance=="Absent" ? 'text-danger' : 'text-success'}}">{{$empData->attendance}}</td>
+                            <td class="{{$empData->attendance=="Absent" ? 'text-danger' : 'text-success'}}">{{ ($empData->day=="Sunday") ?  (($empData->attendance=="Present") ? "Present On Weekly Off" : "On WeeklyOff") : $empData->attendance}}</td>
                             <td>{{$empData->officeIn=="00:00:00" ? "-" : $empData->officeIn}}</td>
                             <td class="{{ substr_count($empData->LE, '-') ? 'text-success' : "text-danger" }}">{{$empData->LE=="00:00:00" ? "-" : $empData->LE}}</td>
                             <td>{{$empData->officeOut=="00:00:00" ? "-" : $empData->officeOut}}</td>

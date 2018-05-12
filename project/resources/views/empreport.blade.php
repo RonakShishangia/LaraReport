@@ -101,12 +101,14 @@
                             <td>{{$empData->note}}</td>
                         </tr>
                         @php
-                            $empData->attendance != "Absent" ? $tempEntryTimeArr[] =  strtotime($empData->officeIn) : "";
-                            $empData->attendance != "Absent" ? $tempExitTimeArr[] =  strtotime($empData->officeOut) : "";
-                            $tempTotalTimeArr[] =  $empData->total_time;
                             $tempTotalWorkedTimeArr[] = $empData->worked_time;
-                            $tempTotalBreakTimeArr[] = $empData->total_break_time;
-                            $tempDutyTime[]=$empData->employee->company->dutyTime;
+                            if($empData->day != "Sunday"){
+                                $empData->attendance != "Absent" ? $tempEntryTimeArr[] =  strtotime($empData->officeIn) : "";
+                                $empData->attendance != "Absent" ? $tempExitTimeArr[] =  strtotime($empData->officeOut) : "";
+                                $tempTotalTimeArr[] =  $empData->total_time;
+                                $tempTotalBreakTimeArr[] = $empData->total_break_time;
+                                $tempDutyTime[]=$empData->employee->company->dutyTime;
+                            }
 
                             strpos($empData->OT,'-')!==false ? $tempLessTime[]=str_replace('-', '', $empData->OT) : $tempOverTime[]=$empData->OT;
 

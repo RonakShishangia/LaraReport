@@ -150,7 +150,12 @@
                     </tfoot>
                 </tbody>
             </table>
-            <legend>Report Card | <small><u>From</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}</b> <u>To</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}</b></small></legend>
+            <legend>Report Card | 
+                <small>
+                    <u>From</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}</b>
+                    <u>To</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}</b>
+                </small>
+            </legend>
             <table class="table" id="tblreport">
                 <thead class="bg-warning">
                     <tr>

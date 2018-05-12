@@ -9,7 +9,7 @@ class Company extends Model
 {
     use SoftDeletes;
     protected $table="companies";
-    protected $fillable=['name','email','startTime','endTime','dutyTime'];
+    protected $fillable=['name','email','startTime','endTime','breakTime','dutyTime','officeTime'];
     protected $dates = ['deleted_at'];
 
     public function departments()

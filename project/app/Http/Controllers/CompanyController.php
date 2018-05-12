@@ -42,6 +42,8 @@ class CompanyController extends Controller
             'email'=>'required|email',
             'startTime'=>'required',
             'endTime'=>'required',
+            'breakTime'=>'required',
+            'officeTime'=>'required',
             'dutyTime'=>'required'
         ]);
         $data=$request->all();

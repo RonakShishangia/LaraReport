@@ -84,12 +84,11 @@
                 </thead>
                 <tbody>
                     @php
-                        $tempEntryTimeArr = [];
-                        $tempExitTimeArr = [];
+                        $tempEntryTimeArr = [];     $tempExitTimeArr = [];
                         $tempTotalTimeArr = [];
                         $tempTotalWorkedTimeArr = [];
-                        $tempTotalBreakTimeArr = [];
-                        $tempTotalBreakArr = [];
+                        $tempTotalBreakTimeArr = [];    $officeBreakTotal=[];
+                        $totalLeaveArr = [];
                         $tempEarlyEntryTimeArr = [];
                         $tempLateEntryTimeArr = [];
                         $tempOTTimeArr = [];
@@ -118,28 +117,25 @@
                         </tr>
                         @php
                             $tempTotalWorkedTimeArr[] = $empData->worked_time;
-                            if($empData->day != "Sunday"){
+                            if($empData->day != 'Sunday'){
                                 $empData->attendance != "Absent" ? $tempEntryTimeArr[] =  strtotime($empData->officeIn) : "";
                                 $empData->attendance != "Absent" ? $tempExitTimeArr[] =  strtotime($empData->officeOut) : "";
                                 $tempTotalTimeArr[] =  $empData->total_time;
                                 $tempTotalBreakTimeArr[] = $empData->total_break_time;
                                 $tempDutyTime[]=$empData->employee->company->dutyTime;
-                            }
+                                $officeBreakTotal[]=$empData->employee->company->breakTime;
+                                $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? $tempNotThumb[]=date('d-m-Y', strtotime($empData->date)) : "" : "";
+                                if(strpos($empData->LE, '-') !== false){
+                                    $EEdata = str_replace('-', '', $empData->LE);
+                                    $tempEarlyEntryTimeArr[] = strtotime($EEdata);
+                                }else{
+                                    $LEdata = str_replace('-', '', $empData->LE);
+                                    $tempLateEntryTimeArr[] =  strtotime($LEdata);
+                                }
 
-                            strpos($empData->OT,'-')!==false ? $tempLessTime[]=str_replace('-', '', $empData->OT) : $tempOverTime[]=$empData->OT;
-
-                            $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? $tempNotThumb[]=date('d-m-Y', strtotime($empData->date)) : "" : "";
-
-                            if(strpos($empData->LE, '-') !== false){
-                                $EEdata = str_replace('-', '', $empData->LE);
-                                $tempEarlyEntryTimeArr[] = strtotime($EEdata);
-                            }else{
-                                $LEdata = str_replace('-', '', $empData->LE);
-                                $tempLateEntryTimeArr[] =  strtotime($LEdata);
-                            }
-
-                            if ($empData->attendance=="Absent") {
-                                $tempTotalBreakArr[] = date('d-m-Y', strtotime($empData->date));
+                                if ($empData->attendance=="Absent") {
+                                    $totalLeaveArr[] = date('d-m-Y', strtotime($empData->date));
+                                }
                             }
                         @endphp
                     @empty
@@ -177,8 +173,7 @@
                         <th>Avg. Exit Time</th>
                         <th>Total Late Time</th>
                         <th>Total Early Time</th>
-                        <th>Total Break Time</th>
-                        <th>Total Time</th>
+                        <th>Break Taken / Total Break</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -187,8 +182,7 @@
                         <th>{{ date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr)) }}</th>
                         <th>{{ date('H:i:s', array_sum($tempLateEntryTimeArr)) }}</th>
                         <th>{{ date('H:i:s', array_sum($tempEarlyEntryTimeArr)) }}</th>
-                        <th>{{ sumOfTime($tempTotalBreakTimeArr) }}</th>
-                        <th>{{ sumOfTime($tempTotalTimeArr) }}</th>
+                        <th>{{ sumOfTime($tempTotalBreakTimeArr)." / ".sumOfTime($officeBreakTotal)  }}</th>
                     </tr>
                 </tbody>
                 <thead class="bg-warning">
@@ -198,7 +192,6 @@
                         <th>OT/Less Time</th>
                         <th>Total Leaves</th>
                         <th>Total Not Thumb</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -207,7 +200,7 @@
                         <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
                         <th class="{{strpos($otlt,'-')!==false ? 'text-danger' : 'text-success' }}">{{ $otlt }}</th>
 
-                        <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
+                        <th>{{ count($totalLeaveArr)==0 ? '-' : count($totalLeaveArr) }}</th>
                         <th>{{ count($tempNotThumb) }}</th>
 
                     </tr>

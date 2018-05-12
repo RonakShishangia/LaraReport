@@ -31,36 +31,34 @@ class AttendanceReportController extends Controller
             if(Input::hasFile('import_file')){
                 $path = Input::file('import_file')->getRealPath();
                 $fileD = file($path);
-    
+
                 $tmpFileDates = explode(',', $fileD[0]);
-    
+
                 $ckDuplicateDate = AttendanceReport::where('date', date('Y-m-d', strtotime($tmpFileDates[0])))->count();
                 //dd($ckDuplicateDate);
                 if($ckDuplicateDate > 0){
                     session()->flash('error','Duplicate file entry.');
                     return redirect('/');
                 }else{
-    
+
                     foreach($fileD as $line){
                         $search_string = ["(in)", "(out)"];           // search string
                         $replace_string = ["", ""];                   // replace searched
-                        
+
                         $tmpLine = str_getcsv($line);
-                        
+
                         if($tmpLine[17] == "On WeeklyOff"){
                             $tmpArray = array();
                         }else{
                             $tmpArray = explode(';', str_replace($search_string, $replace_string, rtrim($tmpLine[18], ';')));
                         }
-                        // dd($tmpLine[17]);
-                        
                         $employee=Employee::where('name','=',strtoupper($tmpLine[2]))->first();
                         if(!($employee))
                           continue;
                         $companyStartTime = $employee->company->startTime;
                         $companyEndTime = $employee->company->endTime;
                         $companyDutyTime = $employee->company->dutyTime;
-    
+
                         // $thumbs[$tmpLine[2]] = rtrim($tmpLine[18], ';');
                         $tmpLineCount = count($tmpArray);
                         $thumbs[$tmpLine[2]]['officeIn'] = reset($tmpArray);
@@ -68,9 +66,9 @@ class AttendanceReportController extends Controller
                         // count total time
                         $timDiff = strtotime(end($tmpArray)) - strtotime(reset($tmpArray));
                         $thumbs[$tmpLine[2]]['total_time'] =  gmdate('H:i:s', $timDiff);
-    
+
                         $thumbs[$tmpLine[2]]['attendance'] = $tmpLine[17];
-    
+
                         $thumbs[$tmpLine[2]]['department'] = $tmpLine[4];
                         // thumbs ok or not
                         if($tmpLineCount % 2 != 0){
@@ -84,18 +82,18 @@ class AttendanceReportController extends Controller
                                 $thumbs[$tmpLine[2]]['attendance'] == "Present";
                             }
                         }
-                        
+
                         if($tmpLine[17] == "On WeeklyOff"){
                             $thumbs[$tmpLine[2]]['break'] = array();
                         }else{
                             $thumbs[$tmpLine[2]]['break'] = explode(';', str_replace($search_string, $replace_string, rtrim($tmpLine[18], ';')));
                         }
-    
+
                         array_shift($thumbs[$tmpLine[2]]['break']);
                         array_pop($thumbs[$tmpLine[2]]['break']);
-    
+
                         $thumbs[$tmpLine[2]]['break'] = array_chunk($thumbs[$tmpLine[2]]['break'], 2);
-    
+
                         $sum = strtotime('00:00:00');
                         $sum2=0;
                         foreach ($thumbs[$tmpLine[2]]['break'] as &$break) {
@@ -115,7 +113,7 @@ class AttendanceReportController extends Controller
                         // total worked time
                         $working_time = $timDiff-$sum3;
                         $thumbs[$tmpLine[2]]['worked_time'] = gmdate("H:i:s", $working_time);
-    
+
                         $officeInSE = str_contains($tmpLine[10] , "(SE)");
                         $officeOutSE = str_contains($tmpLine[11] , "(SE)");
                         // dd($tmpLine[11]);
@@ -124,11 +122,11 @@ class AttendanceReportController extends Controller
                         }else{
                             $thumbs[$tmpLine[2]]['note'] = null;
                         }
-    
+
                         $entryDiff = strtotime($companyStartTime) - strtotime($thumbs[$tmpLine[2]]['officeIn']);
                         $exitDiff =  strtotime($companyEndTime) - strtotime($thumbs[$tmpLine[2]]['officeOut']);
                         $ot=strtotime($companyDutyTime) - strtotime($thumbs[$tmpLine[2]]['worked_time']);
-    
+
                         // check "not_thumb is false of not
                         if($thumbs[$tmpLine[2]]['attendance'] == "Present" || $thumbs[$tmpLine[2]]['attendance'] == "Present On WeeklyOff" ){
                             // Late entry time diffrence
@@ -153,7 +151,7 @@ class AttendanceReportController extends Controller
                             $entryTimeDiff = "00:00:00";
                             $overTime = "00:00:00";
                         }
-    
+
                         // dd($thumbs[$tmpLine[2]]['attendance']);
                         $tmpLine[0] = date('Y-m-d', strtotime($tmpLine[0]));
                         $tmpLine[10] = str_replace('(SE)', '', $tmpLine[10]);
@@ -183,10 +181,9 @@ class AttendanceReportController extends Controller
                         $attendanceReportDatas->note = $thumbs[$tmpLine[2]]['note'];
                         $attendanceReportDatas->not_thumb = $thumbs[$tmpLine[2]]['not_thumb'];
                         $attendanceReportDatas->save();
-                        // send email 
+                        // send email
                         // \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                     }
-<<<<<<< HEAD
                     // sum of all breaks
                     $sum3=$sum+$sum2;
                     // count total break time
@@ -265,15 +262,12 @@ class AttendanceReportController extends Controller
                     $attendanceReportDatas->save();
                     // send email
                     // \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
-=======
-                    return redirect('/');
->>>>>>> a42ebea230f7379282f5ee6824c5f96fbffcdc16
                 }
             }
         }catch(\Exception $ex){
             dd($ex);
         }
-        
+
     }
 
     /**
@@ -394,7 +388,7 @@ class AttendanceReportController extends Controller
             $seconds -= $hours * 3600;
             $minutes  = floor( $seconds / 60 );
             $seconds -= $minutes * 60;
-         
+
             $totalLETime = $hours.":".$minutes.":".$seconds;
             $tmpView = view('empreport', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'))->render();
             return response()->json([

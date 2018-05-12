@@ -104,7 +104,7 @@
                             <td>{{$index+1}}</td>
                             <td>{{$empData->day}}</td>
                             <td>{{date('d-m-Y', strtotime($empData->date))}}</td>
-                            <td class="{{$empData->attendance=="Absent" ? 'text-danger' : 'text-success'}}">{{ ($empData->day=="Sunday") ?  (($empData->attendance=="Present") ? "Present On Weekly Off" : "On WeeklyOff") : $empData->attendance}}</td>
+                            <td class="{{$empData->attendance=="Absent" ? 'text-danger' : 'text-success'}}">{{$empData->attendance}}</td>
                             <td>{{$empData->officeIn=="00:00:00" ? "-" : $empData->officeIn}}</td>
                             <td class="{{ substr_count($empData->LE, '-') ? 'text-success' : "text-danger" }}">{{$empData->LE=="00:00:00" ? "-" : $empData->LE}}</td>
                             <td>{{$empData->officeOut=="00:00:00" ? "-" : $empData->officeOut}}</td>
@@ -123,7 +123,7 @@
                                 $tempTotalTimeArr[] =  $empData->total_time;
                                 $tempTotalBreakTimeArr[] = $empData->total_break_time;
                                 $tempDutyTime[]=$empData->employee->company->dutyTime;
-                                $officeBreakTotal[]=$empData->employee->company->breakTime;
+                                $empData->attendance!="Absent" ?  $officeBreakTotal[]=$empData->employee->company->breakTime : "";
                                 $empData->attendance!="Absent" ?  $empData->not_thumb==0 ? $tempNotThumb[]=date('d-m-Y', strtotime($empData->date)) : "" : "";
                                 if(strpos($empData->LE, '-') !== false){
                                     $EEdata = str_replace('-', '', $empData->LE);

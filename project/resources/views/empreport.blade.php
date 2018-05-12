@@ -24,19 +24,39 @@
             $hours = "0".$hours;
         return  "{$hours}:{$minutes}:{$seconds}";
     }
-    function subOfTime($worked,$duty){
-        $start    = explode(":",$worked);
-        $end  = explode(":",$duty);
-        $start = new DateInterval('PT'.$start[0]."H".$start[1]."M".$start[2]."S");
-        $end = new DateInterval('PT'.$end[0]."H".$end[1]."M".$end[2]."S");
-        $startTime=new DateTime();
-        $startTime->add($start);
-        $endTime=new DateTime();
-        $endTime->add($end);
-        $diff=$endTime->diff($startTime);
-        $final = $diff->format("%H:%I:%S");
-        return $endTime > $startTime ? "-".$final : $final;
-        echo $final;
+    function subOfTime($workedTime,$dutyTime){
+        $wseconds=0; $dseconds=0;
+        $seconds=0;
+        // convert total worked time in seconds
+        list($whour,$wminute,$wsecond) = explode(':', $workedTime);
+        $wseconds += $whour*3600;
+        $wseconds += $wminute*60;
+        $wseconds += $wsecond;
+        //convert total duty time in seconds
+        list($dhour,$dminute,$dsecond) = explode(':', $dutyTime);
+        $dseconds += $dhour*3600;
+        $dseconds += $dminute*60;
+        $dseconds += $dsecond;
+        // substract total worked time from total dutyTime
+        $seconds = $dseconds - $wseconds;
+        // convert seconds into hours, minutes, and seconds
+        $hours = floor($seconds/3600);
+        $seconds -= $hours*3600;
+        $minutes  = floor($seconds/60);
+        $seconds -= $minutes*60;
+        // add zero before single digits
+        if($seconds <= 9)
+            $seconds = "0".abs($seconds);
+        if($minutes <= 9)
+            $minutes = "0".abs($minutes);
+        if($hours <= 9)
+            $hours = "0".abs($hours);
+        if($wseconds > $dseconds)
+            $final=$hours.":".$minutes.":".$seconds;//"{$hours}:{$minutes}:{$seconds}";
+        else{
+            $final= "-".$hours.":".$minutes.":".$seconds;//"{$hours}:{$minutes}:{$seconds}";
+        }
+        return  $final;
     }
     @endphp
 
@@ -106,7 +126,7 @@
                             $tempTotalTimeArr[] =  $empData->total_time;
                             $tempTotalWorkedTimeArr[] = $empData->worked_time;
                             $tempTotalBreakTimeArr[] = $empData->total_break_time;
-                            $empData->attendance!="Absent" ? $tempDutyTime[]=$empData->employee->company->dutyTime : "";
+                            $tempDutyTime[]=$empData->employee->company->dutyTime;
 
                             strpos($empData->OT,'-')!==false ? $tempLessTime[]=str_replace('-', '', $empData->OT) : $tempOverTime[]=$empData->OT;
 
@@ -185,8 +205,10 @@
                     <tr>
                         <th>{{ sumOfTime($tempDutyTime) }}</th>
                         <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
-                        {{-- <th>{{ sumOfTime($tempOverTime) }}</th> --}}
-                        <th>{{ subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime)) }}</th>
+                        @php
+                            $otlt=subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime));
+                        @endphp
+                        <th class="{{strpos($otlt,'-')!==false ? 'text-danger' : 'text-success' }}">{{ $otlt }}</th>
                         {{-- <th>{{ subOfTime(sumOfTime($tempOverTime),sumOfTime($tempLessTime)) }}</th> --}}
                         <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
                         <th>{{ count($tempNotThumb) }}</th>

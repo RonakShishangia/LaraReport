@@ -19,6 +19,8 @@ class CreateCompaniesTable extends Migration
             $table->string('email');
             $table->time('startTime')->nullable();
             $table->time('endTime')->nullable();
+            $table->time('officeTime')->nullable();
+            $table->time('breakTime')->nullable();
             $table->time('dutyTime')->nullable();
             $table->SoftDeletes();
             $table->timestamps();

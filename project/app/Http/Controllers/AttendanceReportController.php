@@ -115,7 +115,7 @@ class AttendanceReportController extends Controller
                     $ot=strtotime($companyDutyTime) - strtotime($thumbs[$tmpLine[2]]['worked_time']);
 
                     // check "not_thumb is false of not
-                    if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
+                    if($thumbs[$tmpLine[2]]['attendance'] == "Present" || $thumbs[$tmpLine[2]]['attendance'] == "Present On WeeklyOff" ){
                         // Late entry time diffrence
                         // if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
                             if(strtotime($thumbs[$tmpLine[2]]['officeIn']) > strtotime($companyStartTime))
@@ -169,7 +169,8 @@ class AttendanceReportController extends Controller
                     $attendanceReportDatas->not_thumb = $thumbs[$tmpLine[2]]['not_thumb'];
                     // return view('emails.dailyReportMail',compact('attendanceReportDatas'));
                     $attendanceReportDatas->save();
-                    \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
+                    // send email 
+                    // \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                 }
                 //return response()->json($thumbs);
                 return redirect('/');

@@ -195,7 +195,7 @@
                     <tr>
                         <th>Total Duty Time</th>
                         <th>Total Worked Time</th>
-                        <th>OT/Less Time</th>
+                        {{-- <th>OT/Less Time</th> --}}
                         <th>Total Leaves</th>
                         <th>Total Not Thumb</th>
                         <th></th>
@@ -205,10 +205,15 @@
                     <tr>
                         <th>{{ sumOfTime($tempDutyTime) }}</th>
                         <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
+<<<<<<< HEAD
                         @php
                             $otlt=subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime));
                         @endphp
                         <th class="{{strpos($otlt,'-')!==false ? 'text-danger' : 'text-success' }}">{{ $otlt }}</th>
+=======
+                        {{-- <th>{{ sumOfTime($tempOverTime) }}</th> --}}
+                        {{-- <th>{{ subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime)) }}</th> --}}
+>>>>>>> 1558ed5b3f2584085edab544f00df49fa0284f49
                         {{-- <th>{{ subOfTime(sumOfTime($tempOverTime),sumOfTime($tempLessTime)) }}</th> --}}
                         <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
                         <th>{{ count($tempNotThumb) }}</th>

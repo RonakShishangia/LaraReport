@@ -106,7 +106,7 @@
                             $tempTotalTimeArr[] =  $empData->total_time;
                             $tempTotalWorkedTimeArr[] = $empData->worked_time;
                             $tempTotalBreakTimeArr[] = $empData->total_break_time;
-                            $empData->attendance!="Absent" ? $tempDutyTime[]=$empData->employee->company->dutyTime : "";
+                            $tempDutyTime[]=$empData->employee->company->dutyTime;
 
                             strpos($empData->OT,'-')!==false ? $tempLessTime[]=str_replace('-', '', $empData->OT) : $tempOverTime[]=$empData->OT;
 
@@ -175,7 +175,7 @@
                     <tr>
                         <th>Total Duty Time</th>
                         <th>Total Worked Time</th>
-                        <th>OT/Less Time</th>
+                        {{-- <th>OT/Less Time</th> --}}
                         <th>Total Leaves</th>
                         <th>Total Not Thumb</th>
                         <th></th>
@@ -186,7 +186,7 @@
                         <th>{{ sumOfTime($tempDutyTime) }}</th>
                         <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
                         {{-- <th>{{ sumOfTime($tempOverTime) }}</th> --}}
-                        <th>{{ subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime)) }}</th>
+                        {{-- <th>{{ subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime)) }}</th> --}}
                         {{-- <th>{{ subOfTime(sumOfTime($tempOverTime),sumOfTime($tempLessTime)) }}</th> --}}
                         <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
                         <th>{{ count($tempNotThumb) }}</th>

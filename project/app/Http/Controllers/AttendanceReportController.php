@@ -169,7 +169,7 @@ class AttendanceReportController extends Controller
                     $attendanceReportDatas->not_thumb = $thumbs[$tmpLine[2]]['not_thumb'];
                     // return view('emails.dailyReportMail',compact('attendanceReportDatas'));
                     $attendanceReportDatas->save();
-                    // send email 
+                    // send email
                     // \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                 }
                 //return response()->json($thumbs);
@@ -279,8 +279,8 @@ class AttendanceReportController extends Controller
     public function getEmpReport(Request $request) {
         try{
             $seconds = 0;
-            $startDate = $request->startDate;
-            $endDate = $request->endDate;
+            $startDate = date("Y-m-d",strtotime($request->startDate));
+            $endDate = date("Y-m-d",strtotime($request->endDate));
             $employee = $request->employee;
 
             $employees = Employee::get();

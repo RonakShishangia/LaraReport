@@ -131,7 +131,7 @@ $(function () {
 
     $('#startDate').datetimepicker({
       pickTime: false,
-      format: "YYYY-MM-DD",
+      format: "DD-MM-YYYY",
       defaultDate: sd,
       maxDate: ed,
     //   daysOfWeekDisabled: [0]
@@ -139,7 +139,7 @@ $(function () {
 
     $('#endDate').datetimepicker({
       pickTime: false,
-      format: "YYYY-MM-DD",
+      format: "DD-MM-YYYY",
       defaultDate: ed,
     //   minDate: sd,
     //   daysOfWeekDisabled: [0]

@@ -1,65 +1,61 @@
 <div class="panel panel-primary" >
-        <!-- Default panel contents -->
     @if(count($empDatas) > 0)
-
-    @php
-    function sumOfTime($timeArr){
-        $seconds = 0;
-        foreach ($timeArr as $time)
-        {
-            list($hour,$minute,$second) = explode(':', $time);
-            $seconds += $hour*3600;
-            $seconds += $minute*60;
-            $seconds += $second;
-        }
-        $hours = floor($seconds/3600);
-        $seconds -= $hours*3600;
-        $minutes  = floor($seconds/60);
-        $seconds -= $minutes*60;
-        if($seconds <= 9)
-            $seconds = "0".$seconds;
-        if($minutes <= 9)
-            $minutes = "0".$minutes;
-        if($hours <= 9)
-            $hours = "0".$hours;
-        return  "{$hours}:{$minutes}:{$seconds}";
-    }
-    function subOfTime($workedTime,$dutyTime){
-        $wseconds=0; $dseconds=0;
-        $seconds=0;
-        // convert total worked time in seconds
-        list($whour,$wminute,$wsecond) = explode(':', $workedTime);
-        $wseconds += $whour*3600;
-        $wseconds += $wminute*60;
-        $wseconds += $wsecond;
-        //convert total duty time in seconds
-        list($dhour,$dminute,$dsecond) = explode(':', $dutyTime);
-        $dseconds += $dhour*3600;
-        $dseconds += $dminute*60;
-        $dseconds += $dsecond;
-        // substract total worked time from total dutyTime
-        $seconds = $dseconds - $wseconds;
-        // convert seconds into hours, minutes, and seconds
-        $hours = floor($seconds/3600);
-        $seconds -= $hours*3600;
-        $minutes  = floor($seconds/60);
-        $seconds -= $minutes*60;
-        // add zero before single digits
-        if($seconds <= 9)
-            $seconds = "0".abs($seconds);
-        if($minutes <= 9)
-            $minutes = "0".abs($minutes);
-        if($hours <= 9)
-            $hours = "0".abs($hours);
-        if($wseconds > $dseconds)
-            $final=$hours.":".$minutes.":".$seconds;//"{$hours}:{$minutes}:{$seconds}";
-        else{
-            $final= "-".$hours.":".$minutes.":".$seconds;//"{$hours}:{$minutes}:{$seconds}";
-        }
-        return  $final;
-    }
-    @endphp
-
+        @php
+            function sumOfTime($timeArr){
+                $seconds = 0;
+                foreach ($timeArr as $time){
+                    list($hour,$minute,$second) = explode(':', $time);
+                    $seconds += $hour*3600;
+                    $seconds += $minute*60;
+                    $seconds += $second;
+                }
+                $hours = floor($seconds/3600);
+                $seconds -= $hours*3600;
+                $minutes  = floor($seconds/60);
+                $seconds -= $minutes*60;
+                if($seconds <= 9)
+                    $seconds = "0".$seconds;
+                if($minutes <= 9)
+                    $minutes = "0".$minutes;
+                if($hours <= 9)
+                    $hours = "0".$hours;
+                return  "{$hours}:{$minutes}:{$seconds}";
+            }
+            function subOfTime($workedTime,$dutyTime){
+                $wseconds=0; $dseconds=0;
+                $seconds=0;
+                // convert total worked time in seconds
+                list($whour,$wminute,$wsecond) = explode(':', $workedTime);
+                $wseconds += $whour*3600;
+                $wseconds += $wminute*60;
+                $wseconds += $wsecond;
+                //convert total duty time in seconds
+                list($dhour,$dminute,$dsecond) = explode(':', $dutyTime);
+                $dseconds += $dhour*3600;
+                $dseconds += $dminute*60;
+                $dseconds += $dsecond;
+                // substract total worked time from total dutyTime
+                $seconds = $dseconds - $wseconds;
+                // convert seconds into hours, minutes, and seconds
+                $hours = floor($seconds/3600);
+                $seconds -= $hours*3600;
+                $minutes  = floor($seconds/60);
+                $seconds -= $minutes*60;
+                // add zero before single digits
+                if($seconds <= 9)
+                    $seconds = "0".abs($seconds);
+                if($minutes <= 9)
+                    $minutes = "0".abs($minutes);
+                if($hours <= 9)
+                    $hours = "0".abs($hours);
+                if($wseconds > $dseconds)
+                    $final=$hours.":".$minutes.":".$seconds;//"{$hours}:{$minutes}:{$seconds}";
+                else{
+                    $final= "-".$hours.":".$minutes.":".$seconds;//"{$hours}:{$minutes}:{$seconds}";
+                }
+                return  $final;
+            }
+        @endphp
         <div class="panel-heading">
             <b>{{$empDatas == null ? 'List' : $empDatas[0]->employee->name}}</b>
             <p class="pull-right">
@@ -170,6 +166,9 @@
             </table>
             <legend>Report Card | <small><u>From</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}</b> <u>To</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}</b></small></legend>
             <table class="table" id="tblreport">
+                @php
+                    $otlt=subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime));
+                @endphp
                 <thead class="bg-warning">
                     <tr>
                         <th>Avg. Entry Time</th>
@@ -188,14 +187,13 @@
                         <th>{{ date('H:i:s', array_sum($tempEarlyEntryTimeArr)) }}</th>
                         <th>{{ sumOfTime($tempTotalBreakTimeArr) }}</th>
                         <th>{{ sumOfTime($tempTotalTimeArr) }}</th>
-
                     </tr>
                 </tbody>
                 <thead class="bg-warning">
                     <tr>
                         <th>Total Duty Time</th>
                         <th>Total Worked Time</th>
-                        {{-- <th>OT/Less Time</th> --}}
+                        <th>OT/Less Time</th>
                         <th>Total Leaves</th>
                         <th>Total Not Thumb</th>
                         <th></th>
@@ -205,27 +203,16 @@
                     <tr>
                         <th>{{ sumOfTime($tempDutyTime) }}</th>
                         <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
-<<<<<<< HEAD
-                        @php
-                            $otlt=subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime));
-                        @endphp
                         <th class="{{strpos($otlt,'-')!==false ? 'text-danger' : 'text-success' }}">{{ $otlt }}</th>
-=======
-                        {{-- <th>{{ sumOfTime($tempOverTime) }}</th> --}}
-                        {{-- <th>{{ subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime)) }}</th> --}}
->>>>>>> 1558ed5b3f2584085edab544f00df49fa0284f49
-                        {{-- <th>{{ subOfTime(sumOfTime($tempOverTime),sumOfTime($tempLessTime)) }}</th> --}}
+
                         <th>{{ count($tempTotalBreakArr)==0 ? '-' : count($tempTotalBreakArr) }}</th>
                         <th>{{ count($tempNotThumb) }}</th>
-                        {{-- <th>{{ print_r($tempOverTime) }}</th>
-                        <th>{{ print_r($tempLessTime) }}</th> --}}
+
                     </tr>
                 </tbody>
             </table>
         </div>
-        <!-- List group -->
         <div class="list-group">
-            {{-- {{ceil(array_sum($ExitTimeArr)/count($ExitTimeArr))}} --}}
             <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}}
                 <p class="pull-right">
                     From : <b>{{ isset($startDate) ? date('d-m-Y', strtotime($startDate)) : "" }} </b>  |

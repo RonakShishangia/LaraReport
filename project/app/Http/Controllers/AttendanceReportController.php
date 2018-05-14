@@ -261,13 +261,14 @@ class AttendanceReportController extends Controller
                     // return view('emails.dailyReportMail',compact('attendanceReportDatas'));
                     $attendanceReportDatas->save();
                     // send email
-                    // \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
+                    \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                 }
+                session()->flash('success','File successfully added.');
+                return redirect('/');
             }
         }catch(\Exception $ex){
             dd($ex);
         }
-
     }
 
     /**
@@ -369,7 +370,6 @@ class AttendanceReportController extends Controller
             $startDate = date("Y-m-d",strtotime($request->startDate));
             $endDate = date("Y-m-d",strtotime($request->endDate));
             $employee = $request->employee;
-
             $employees = Employee::get();
             $empDatas = AttendanceReport::where('employee_id', $employee)
                                         // ->where('LE', 'NOT LIKE',  "-%")
@@ -394,7 +394,6 @@ class AttendanceReportController extends Controller
             return response()->json([
                 'tmp' => $tmpView,
             ]);
-            return view('report', compact('employees', 'empDatas', 'totalLETime', 'startDate', 'endDate', 'employee'));
         }catch(\Exception $ex){
             dd($ex);
             session()->flash('error','Error :  Something went wrong.');
@@ -417,6 +416,140 @@ class AttendanceReportController extends Controller
             session()->flash('error','Error while entering NOTE');
             return redirect('/');
         }
+    }
+    public function exportExcel(Request $request)
+    {
+        // dd($request->all());
+        try{
+            $seconds = 0;
+            $startDate = date("Y-m-d",strtotime(str_replace(" ","",$request->startDate)));
+            $endDate = date("Y-m-d",strtotime(str_replace(" ","",$request->endDate)));
+            $employee_id = $request->employee_id;
+            $empDatas = AttendanceReport::where('employee_id', $employee_id)
+                                        ->whereBetween('date', [$startDate, $endDate])
+                                        ->orderBy('date', 'asc')->get();
+            $empReport=[];
+            $empReport[]=['#','Date','Day','Attendance','EntryTime','LateEntry','ExitTime','WorkedTime','TotalBreakTime','Thumb','OverTime','Note'];
+            $i=1;
+            foreach($empDatas as $empData){
+                $empReport[$i]['id'] = $i;
+                $empReport[$i]['date'] = $empData->date;
+                $empReport[$i]['day'] = date('l', strtotime($empData->date));
+                $empReport[$i]['attendance'] = $empData->attendance;
+                $empReport[$i]['officeIn'] = $empData->officeIn;
+                $empReport[$i]['LE'] = $empData->LE;
+                $empReport[$i]['officeOut'] = $empData->officeOut;
+                $empReport[$i]['worked_time'] = $empData->worked_time;
+                $empReport[$i]['total_break_time'] = $empData->total_break_time;
+                $empReport[$i]['not_thumb'] = $empData->not_thumb==0 ? "Not Thumb" : "OK";
+                $empReport[$i]['OT'] = $empData->OT;
+                $empReport[$i]['note'] = $empData->note;
+                $i++;
+            }
+            \Excel::create($empDatas[0]->employee->name." Attendance Report", function($excel) use ($empReport,$empDatas,$request) {
+				$excel->setTitle($empDatas[0]->employee->name." Attendance Report");
+				$excel->setCreator(\Auth::user()->name)->setCompany('NKonnect Infoway Pvt. Ltd.');
+				$excel->sheet('All', function($sheet)  use ($empReport,$empDatas,$request) {
+                    $length=count($empReport) + 8;
+                    $sheet->setBorder('A1:L'.$length,'thin');
+                    //Company Title
+                    $sheet->mergeCells('A1:L1');
+                    $sheet->getRowDimension(1)->setRowHeight(30);
+                    $sheet->cell('A1',$empDatas[0]->employee->company->name);
+                    $sheet->row(1,function($row){
+                        $row->setFontWeight('bold')->setFontSize(25)
+                        ->setAlignment('center')
+                        ->setValignment('center');
+                    });
+                    //Subject Line
+                    $sheet->mergeCells('A2:L2');
+                    $sheet->cell('A2',"Attendance Report From: ".$request->startDate." To: ".$request->endDate);
+                    $sheet->getRowDimension(2)->setRowHeight(25);
+                    $sheet->row(2,function($row){
+                        $row->setFontWeight('bold')->setFontSize(16)
+                        ->setAlignment('center')
+                        ->setValignment('center');
+                    });
+                    $sheet->mergeCells('A3:L3');
+                    //Employee Details
+                    $sheet->mergeCells("B4:C4");    $sheet->cell('B4',"Employee Name");
+                    $sheet->mergeCells("D4:F4");    $sheet->cell('D4',$empDatas[0]->employee->name);
+                    $sheet->mergeCells("G4:H4");    $sheet->cell('G4',"Department");
+                    $sheet->mergeCells("I4:K4");    $sheet->cell('I4',$empDatas[0]->employee->department->name);
+                    $sheet->getRowDimension(4)->setRowHeight(24);
+                    $sheet->row(4,function($row){
+                        $row->setFontWeight('bold')
+                        ->setAlignment('left')
+                        ->setValignment('bottom');
+                    });
+                    // $sheet->mergeCells('A5:L5');
+                    // Report Header Row -1
+                    $sheet->mergeCells('A5:C5');    $sheet->cell('A5',"Avg. Entry Time");
+                    $sheet->mergeCells('D5:E5');    $sheet->cell('D5',"Avg. Exit Time");
+                    $sheet->mergeCells('F5:G5');    $sheet->cell('F5',"Total Late Time");
+                    $sheet->mergeCells('H5:I5');    $sheet->cell('H5',"Total Early Time");
+                    $sheet->mergeCells('J5:L5');    $sheet->cell('J5',"Break Taken / Total Break");
+                    $sheet->getRowDimension(5)->setRowHeight(24);
+                    $sheet->row(5,function($row){
+                        $row->setFontWeight('bold')->setFontSize(12)
+                        ->setAlignment('center')
+                        ->setValignment('center')
+                        ->setBackground('#fcf8e3');
+                    });
 
+                    $sheet->mergeCells('A6:C6');    $sheet->cell('A6',$request->avgEntry);
+                    $sheet->mergeCells('D6:E6');    $sheet->cell('D6',$request->avgExit);
+                    $sheet->mergeCells('F6:G6');    $sheet->cell('F6',$request->late);
+                    $sheet->mergeCells('H6:I6');    $sheet->cell('H6',$request->early);
+                    $sheet->mergeCells('J6:L6');    $sheet->cell('J6',$request->break);
+                    $sheet->getRowDimension(6)->setRowHeight(24);
+                    $sheet->row(6,function($row){
+                        $row->setFontWeight('bold')->setFontSize(12)
+                        ->setAlignment('center')
+                        ->setValignment('center');
+                    });
+                    // Report Header Row -2
+                    $sheet->mergeCells('A7:C7');    $sheet->cell('A7',"Total Duty Time");
+                    $sheet->mergeCells('D7:E7');    $sheet->cell('D7',"Total Worked Time");
+                    $sheet->mergeCells('F7:G7');    $sheet->cell('F7',"OT/LT");
+                    $sheet->mergeCells('H7:I7');    $sheet->cell('H7',"Total Leave");
+                    $sheet->mergeCells('J7:L7');    $sheet->cell('J7',"Not Thumb");
+                    $sheet->getRowDimension(7)->setRowHeight(24);
+                    $sheet->row(7,function($row){
+                        $row->setFontWeight('bold')->setFontSize(12)
+                        ->setAlignment('center')
+                        ->setValignment('center')
+                        ->setBackground('#fcf8e3');
+                    });
+
+                    $sheet->mergeCells('A8:C8');    $sheet->cell('A8',$request->dutyTime);
+                    $sheet->mergeCells('D8:E8');    $sheet->cell('D8',$request->workedTime);
+                    $sheet->mergeCells('F8:G8');    $sheet->cell('F8',$request->otlt);
+                    $sheet->mergeCells('H8:I8');    $sheet->cell('H8',$request->leave);
+                    $sheet->mergeCells('J8:L8');    $sheet->cell('J8',$request->notThumb);
+
+                    $sheet->getRowDimension(8)->setRowHeight(24);
+                    $sheet->row(8,function($row){
+                        $row->setFontWeight('bold')->setFontSize(12)
+                        ->setAlignment('center')
+                        ->setValignment('center');
+                    });
+                    // $sheet->mergeCells('A10:L10');
+                    // Monthly sheet details
+					$sheet->fromArray($empReport, null, 'A9', false, false);
+                    $sheet->row(9, function($row) {
+                        $row->setFontWeight('bold')
+                            ->setAlignment('center')
+                            ->setValignment('center')
+                            ->setBackground('#d9edf7');
+                    });
+                    $sheet->getRowDimension(9)->setRowHeight(30);
+				});
+			})->download('xls');
+        }catch(\Exception $ex){
+            dd($ex);
+            session()->flash('error','Error :  Something went wrong.');
+            return redirect('/');
+        }
     }
 }

@@ -42,7 +42,7 @@
                     </tr>
                 @endif
             </thead>
-            @if($attendanceReportDatas->attendance == "Present")
+            @if($attendanceReportDatas->attendance == "Present" || $attendanceReportDatas->attendance == "Present On WeeklyOff")
                 <thead style="background:#f0ad4e">
                     <tr>
                         <td>OfficeIn</td>

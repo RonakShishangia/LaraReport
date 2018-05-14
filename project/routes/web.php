@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('searchEmp', 'AttendanceReportController@searchemp')->name('searchemp');
 
     Route::post('report', 'AttendanceReportController@getEmpReport')->name('report');
+    Route::post('export-to-excel','AttendanceReportController@exportExcel')->name('export-to-excel');
 
     /* In out entry */
     Route::get('inout', function () {

@@ -35,7 +35,10 @@
                 $dseconds += $dminute*60;
                 $dseconds += $dsecond;
                 // substract total worked time from total dutyTime
-                $seconds = $dseconds - $wseconds;
+                if($wseconds > $dseconds)
+                    $seconds = $wseconds - $dseconds;
+                else
+                    $seconds = $dseconds - $wseconds;
                 // convert seconds into hours, minutes, and seconds
                 $hours = floor($seconds/3600);
                 $seconds -= $hours*3600;
@@ -64,6 +67,7 @@
             </p>
         </div>
         <div class="panel-body">
+            <button type="button" name="export" id="export" class="btn btn-info">Export to Excel</button>
             <table class="table table-bordered">
                 <thead>
                     <tr class="bg-info">
@@ -162,55 +166,69 @@
                     </tfoot>
                 </tbody>
             </table>
-            <legend>Report Card | 
-                <small>
-                    <u>From</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}</b>
-                    <u>To</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}</b>
-                </small>
-            </legend>
-            <table class="table" id="tblreport">
-                @php
-                    $otlt=subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime));
-                @endphp
-                <thead class="bg-warning">
-                    <tr>
-                        <th>Avg. Entry Time</th>
-                        <th>Avg. Exit Time</th>
-                        <th>Total Late Time</th>
-                        <th>Total Early Time</th>
-                        <th>Break Taken / Total Break</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>{{ date('H:i:s', array_sum($tempEntryTimeArr)/count($tempEntryTimeArr)) }}</th>
-                        <th>{{ date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr)) }}</th>
-                        <th>{{ date('H:i:s', array_sum($tempLateEntryTimeArr)) }}</th>
-                        <th>{{ date('H:i:s', array_sum($tempEarlyEntryTimeArr)) }}</th>
-                        <th>{{ sumOfTime($tempTotalBreakTimeArr)." / ".sumOfTime($officeBreakTotal)  }}</th>
-                    </tr>
-                </tbody>
-                <thead class="bg-warning">
-                    <tr>
-                        <th>Total Duty Time</th>
-                        <th>Total Worked Time</th>
-                        <th>OT/Less Time</th>
-                        <th>Total Leaves</th>
-                        <th>Total Not Thumb</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>{{ sumOfTime($tempDutyTime) }}</th>
-                        <th>{{ sumOfTime($tempTotalWorkedTimeArr) }}</th>
-                        <th class="{{strpos($otlt,'-')!==false ? 'text-danger' : 'text-success' }}">{{ $otlt }}</th>
-
-                        <th>{{ count($totalLeaveArr)==0 ? '-' : count($totalLeaveArr) }}</th>
-                        <th>{{ count($tempNotThumb) }}</th>
-
-                    </tr>
-                </tbody>
-            </table>
+            <form id="frmExport" action="{{ route('export-to-excel') }}" method="post">
+                {{ csrf_field() }}
+                <input type="hidden" name="startDate" value="{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}">
+                <input type="hidden" name="endDate" value="{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}">
+                <input type="hidden" name="employee_id" value="{{$empDatas == null ? '0' : $empDatas[0]->employee->id}}">
+                <legend>Report Card |
+                    <small>
+                        <u>From</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($startDate)) : "" }}</b>
+                        <u>To</u> : <b>{{ isset($startDate) ? date('d - m - Y', strtotime($endDate)) : "" }}</b>
+                    </small>
+                </legend>
+                <table class="table" id="tblreport">
+                    @php
+                        $avgEntry=date('H:i:s', array_sum($tempEntryTimeArr)/count($tempEntryTimeArr));
+                        $avgExit=date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr));
+                        $late=date('H:i:s', array_sum($tempLateEntryTimeArr));
+                        $early=date('H:i:s', array_sum($tempEarlyEntryTimeArr));
+                        $break=sumOfTime($tempTotalBreakTimeArr)." / ".sumOfTime($officeBreakTotal);
+                        $breakDiff=subOfTime(sumOfTime($tempTotalBreakTimeArr),sumOfTime($officeBreakTotal));
+                        $dutyTime=sumOfTime($tempDutyTime);
+                        $workedTime=sumOfTime($tempTotalWorkedTimeArr);
+                        $otlt=subOfTime(sumOfTime($tempTotalWorkedTimeArr),sumOfTime($tempDutyTime));
+                        $leave=count($totalLeaveArr);
+                        $notThumb=count($tempNotThumb);
+                    @endphp
+                    <thead class="bg-warning">
+                        <tr>
+                            <th>Avg. Entry Time</th>
+                            <th>Avg. Exit Time</th>
+                            <th>Total Late Time</th>
+                            <th>Total Early Time</th>
+                            <th>Break Taken / Total Break</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th><input type="hidden" name="avgEntry" value="{{ $avgEntry }}"> {{ $avgEntry }}</th>
+                            <th><input type="hidden" name="avgExit" value="{{ $avgExit }}"> {{ $avgExit }}</th>
+                            <th><input type="hidden" name="late" value="{{ $late }}">{{ $late }}</th>
+                            <th><input type="hidden" name="early" value="{{ $early }}">{{ $early }}</th>
+                            <th><input type="hidden" name="break" value="{{ $break }}">{{ $break }}</th>
+                        </tr>
+                    </tbody>
+                    <thead class="bg-warning">
+                        <tr>
+                            <th>Total Duty Time</th>
+                            <th>Total Worked Time</th>
+                            <th>OT/Less Time</th>
+                            <th>Total Leaves</th>
+                            <th>Total Not Thumb</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th><input type="hidden" name="dutyTime" value="{{ $dutyTime }}">{{ $dutyTime }}</th>
+                            <th><input type="hidden" name="workedTime" value="{{ $workedTime }}">{{ $workedTime }}</th>
+                            <th class="{{strpos($otlt,'-')!==false ? 'text-danger' : 'text-success' }}"><input type="hidden" name="otlt" value="{{ $otlt }}">{{ $otlt }}</th>
+                            <th><input type="hidden" name="leave" value="{{ $leave }}">{{ $leave==0 ? '-' : $leave }}</th>
+                            <th><input type="hidden" name="notThumb" value="{{ $notThumb }}">{{ $notThumb }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         </div>
         <div class="list-group">
             <a href="#" class="list-group-item">{{$empDatas == null ? 'List' : $empDatas[0]->name}}
@@ -220,5 +238,10 @@
                 </p>
             </a>
         </div>
-    </div>
     @endif
+</div>
+<script type="text/javascript">
+    $('#export').click(function(){
+        $('#frmExport').submit();
+    });
+</script>

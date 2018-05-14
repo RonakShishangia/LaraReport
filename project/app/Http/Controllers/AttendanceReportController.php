@@ -433,16 +433,16 @@ class AttendanceReportController extends Controller
             $i=1;
             foreach($empDatas as $empData){
                 $empReport[$i]['id'] = $i;
-                $empReport[$i]['date'] = $empData->date;
+                $empReport[$i]['date'] = date("d-m-Y",strtotime($empData->date));
                 $empReport[$i]['day'] = date('l', strtotime($empData->date));
                 $empReport[$i]['attendance'] = $empData->attendance;
-                $empReport[$i]['officeIn'] = $empData->officeIn;
-                $empReport[$i]['LE'] = $empData->LE;
-                $empReport[$i]['officeOut'] = $empData->officeOut;
-                $empReport[$i]['worked_time'] = $empData->worked_time;
-                $empReport[$i]['total_break_time'] = $empData->total_break_time;
-                $empReport[$i]['not_thumb'] = $empData->not_thumb==0 ? "Not Thumb" : "OK";
-                $empReport[$i]['OT'] = $empData->OT;
+                $empReport[$i]['officeIn'] = $empData->attendance!="Absent" ? $empData->officeIn : "Absent";
+                $empReport[$i]['LE'] = $empData->attendance!="Absent" ? $empData->LE : "Absent";
+                $empReport[$i]['officeOut'] = $empData->attendance!="Absent" ? $empData->officeOut : "Absent";
+                $empReport[$i]['worked_time'] = $empData->attendance!="Absent" ? $empData->worked_time : "Absent";
+                $empReport[$i]['total_break_time'] = $empData->attendance!="Absent" ? $empData->total_break_time : "Absent";
+                $empReport[$i]['not_thumb'] = $empData->attendance!="Absent" ? $empData->not_thumb==0 ? "Not Thumb" : "OK" : "Absent";
+                $empReport[$i]['OT'] = $empData->attendance!="Absent" ? $empData->OT : "Absent";
                 $empReport[$i]['note'] = $empData->note;
                 $i++;
             }
@@ -480,7 +480,7 @@ class AttendanceReportController extends Controller
                     $sheet->row(4,function($row){
                         $row->setFontWeight('bold')
                         ->setAlignment('left')
-                        ->setValignment('bottom');
+                        ->setValignment('center');
                     });
                     // $sheet->mergeCells('A5:L5');
                     // Report Header Row -1

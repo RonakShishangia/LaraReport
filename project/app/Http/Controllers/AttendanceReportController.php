@@ -35,12 +35,11 @@ class AttendanceReportController extends Controller
                 $tmpFileDates = explode(',', $fileD[0]);
 
                 $ckDuplicateDate = AttendanceReport::where('date', date('Y-m-d', strtotime($tmpFileDates[0])))->count();
-                //dd($ckDuplicateDate);
+
                 if($ckDuplicateDate > 0){
                     session()->flash('error','Duplicate file entry.');
                     return redirect('/');
                 }else{
-
                     foreach($fileD as $line){
                         $search_string = ["(in)", "(out)"];           // search string
                         $replace_string = ["", ""];                   // replace searched
@@ -82,7 +81,6 @@ class AttendanceReportController extends Controller
                                 $thumbs[$tmpLine[2]]['attendance'] == "Present";
                             }
                         }
-
                         if($tmpLine[17] == "On WeeklyOff"){
                             $thumbs[$tmpLine[2]]['break'] = array();
                         }else{
@@ -182,86 +180,8 @@ class AttendanceReportController extends Controller
                         $attendanceReportDatas->not_thumb = $thumbs[$tmpLine[2]]['not_thumb'];
                         $attendanceReportDatas->save();
                         // send email
-                        // \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
+                        \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                     }
-                    // sum of all breaks
-                    $sum3=$sum+$sum2;
-                    // count total break time
-                    $thumbs[$tmpLine[2]]['total_break_time'] = date("H:i:s",$sum3);
-                    // total worked time
-                    $working_time = $timDiff-$sum3;
-                    $thumbs[$tmpLine[2]]['worked_time'] = gmdate("H:i:s", $working_time);
-
-                    $officeInSE = str_contains($tmpLine[10] , "(SE)");
-                    $officeOutSE = str_contains($tmpLine[11] , "(SE)");
-                    // dd($tmpLine[11]);
-                    if($officeInSE || $officeOutSE){
-                        $thumbs[$tmpLine[2]]['note'] = "System error thumb <br><b>". ($officeInSE == true ? $tmpLine[10] : "").($officeOutSE == true ? $tmpLine[11] : "")."</b>";
-                    }else{
-                        $thumbs[$tmpLine[2]]['note'] = null;
-                    }
-
-                    $entryDiff = strtotime($companyStartTime) - strtotime($thumbs[$tmpLine[2]]['officeIn']);
-                    $exitDiff =  strtotime($companyEndTime) - strtotime($thumbs[$tmpLine[2]]['officeOut']);
-                    $ot=strtotime($companyDutyTime) - strtotime($thumbs[$tmpLine[2]]['worked_time']);
-
-                    // check "not_thumb is false of not
-                    if($thumbs[$tmpLine[2]]['attendance'] == "Present" || $thumbs[$tmpLine[2]]['attendance'] == "Present On WeeklyOff" ){
-                        // Late entry time diffrence
-                        // if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
-                            if(strtotime($thumbs[$tmpLine[2]]['officeIn']) > strtotime($companyStartTime))
-                                $entryTimeDiff = gmdate('H:i:s', abs($entryDiff));
-                            elseif(strtotime($thumbs[$tmpLine[2]]['officeIn']) < strtotime($companyStartTime))
-                                $entryTimeDiff = '-'.gmdate('H:i:s', abs($entryDiff));
-                            else
-                                $entryTimeDiff = "00:00:00";
-                        // }
-                        // (OT) Exit time diffrence
-                        // if($thumbs[$tmpLine[2]]['attendance'] == "Present"){
-                            if(strtotime($thumbs[$tmpLine[2]]['worked_time']) > strtotime($companyDutyTime))
-                                $overTime = gmdate('H:i:s', abs($ot));
-                            elseif(strtotime($thumbs[$tmpLine[2]]['worked_time']) < strtotime($companyDutyTime))
-                                $overTime = '-'.gmdate('H:i:s', $ot);
-                            else
-                                $overTime = "00:00:00";
-                        // }
-                    }else{
-                        $entryTimeDiff = "00:00:00";
-                        $overTime = "00:00:00";
-                    }
-
-                    // dd($thumbs[$tmpLine[2]]['attendance']);
-                    $tmpLine[0] = date('Y-m-d', strtotime($tmpLine[0]));
-                    $tmpLine[10] = str_replace('(SE)', '', $tmpLine[10]);
-                    $tmpLine[11] = str_replace('(SE)', '', $tmpLine[11]);
-                    $tmpLine[14] = str_replace('0-', '00:', $tmpLine[14]);
-                    // add data to database
-                    $attendanceReportDatas = new AttendanceReport();
-                    $attendanceReportDatas->employee_id = $employee->id;
-                    $attendanceReportDatas->date = $tmpLine[0];
-                    $attendanceReportDatas->name = $tmpLine[2];
-                    $attendanceReportDatas->department = $employee->department->name;//$tmpLine[4];
-                    $attendanceReportDatas->officeIn = $thumbs[$tmpLine[2]]['officeIn'];
-                    $attendanceReportDatas->officeOut = $thumbs[$tmpLine[2]]['officeOut'];
-                    // store total time
-                    $timDiff = strtotime($thumbs[$tmpLine[2]]['officeOut']) - strtotime($thumbs[$tmpLine[2]]['officeIn']);
-                    $attendanceReportDatas->total_time = $thumbs[$tmpLine[2]]['total_time'];
-                    // store total break time
-                    $attendanceReportDatas->total_break_time = $thumbs[$tmpLine[2]]['total_break_time'];
-                    // store total worked time
-                    $attendanceReportDatas->worked_time = $thumbs[$tmpLine[2]]['worked_time'];
-                    $attendanceReportDatas->LE = $entryTimeDiff;
-                    $attendanceReportDatas->OT = $overTime; //gmdate('H:i:s', $tmpLine[13]*60);
-                    // dd($attendanceReportDatas);
-                    $attendanceReportDatas->attendance = $thumbs[$tmpLine[2]]['attendance'];
-                    $attendanceReportDatas->thumbs = $tmpLine[18];
-                    $attendanceReportDatas->breaks = json_encode($thumbs[$tmpLine[2]]['break']);
-                    $attendanceReportDatas->note = $thumbs[$tmpLine[2]]['note'];
-                    $attendanceReportDatas->not_thumb = $thumbs[$tmpLine[2]]['not_thumb'];
-                    // return view('emails.dailyReportMail',compact('attendanceReportDatas'));
-                    $attendanceReportDatas->save();
-                    // send email
-                    \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                 }
                 session()->flash('success','File successfully added.');
                 return redirect('/');

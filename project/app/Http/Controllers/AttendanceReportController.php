@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Excel;
 use App\Mail\DailyReportMail;
+use App\Mail\MonthlyReportMail;
 
 class AttendanceReportController extends Controller
 {
@@ -189,6 +190,7 @@ class AttendanceReportController extends Controller
                         $attendanceReportDatas->save();
                         // send email
                         \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
+                        
                     }
                 }
                 session()->flash('success','File successfully added.');
@@ -198,7 +200,7 @@ class AttendanceReportController extends Controller
             dd($ex);
         }
     }
-
+    
     /**
      * Display a listing of the resource.
      *
@@ -208,6 +210,41 @@ class AttendanceReportController extends Controller
     {
         $data = AttendanceReport::all()->toJson();
         return view('importExport', $data);
+    }
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function lastMonthData(){
+        $start = new \Carbon\Carbon('first day of last month');
+        $end = new \Carbon\Carbon('last day of last month');
+        // $ckPreviousMonthDate = AttendanceReport::whereBetween('date', [$start->toDateString(), $end->toDateString()])->where('employee_id', 1)->get();
+        
+        try{
+            $seconds = 0;
+            $startDate =$start->toDateString();
+            $endDate = $end->toDateString();
+            $employee = 1;
+            $empDatas = AttendanceReport::where('employee_id', $employee)
+            // ->where('LE', 'NOT LIKE',  "-%")
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date', 'asc')->get();
+            foreach($empDatas as $empData){
+                $empData['day'] = date('l', strtotime($empData->date));
+            }
+            $data[] = compact('empDatas', 'startDate', 'endDate');
+
+            \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
+
+           
+        }catch(\Exception $ex){
+            dd($ex);
+            session()->flash('error','Error :  Something went wrong.');
+            return redirect('/');
+        }
+
     }
 
     /**

@@ -25,6 +25,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('importExport', 'AttendanceReportController@importExport');
     Route::get('downloadExcel/{type}', 'AttendanceReportController@downloadExcel');
     Route::post('importExcel', 'AttendanceReportController@importExcel');
+    
+    // get last month record
+    Route::get('lastmonthdata', 'AttendanceReportController@lastMonthData');
 
     // add note to employee
     Route::post('addnote', 'AttendanceReportController@addnote')->name('addnote');

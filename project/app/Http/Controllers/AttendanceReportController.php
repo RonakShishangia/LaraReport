@@ -34,7 +34,7 @@ class AttendanceReportController extends Controller
                 $fileD = file($path);
 
                 $tmpFileDates = explode(',', $fileD[0]);
-                
+
                 $previousDate = strtotime('-1 day', strtotime($tmpFileDates[0]));
                 // check previous date file uploaded or not
                 $ckPreviousDate = AttendanceReport::where('date', date('Y-m-d', $previousDate))->count();
@@ -190,7 +190,9 @@ class AttendanceReportController extends Controller
                         $attendanceReportDatas->save();
                         // send email
                         \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
-                        
+                        $firstDate=explode("-",$tmpLine[0]);
+                        if($firsDate[2]==01)
+                            $this->lastMonthData($employee->id);
                     }
                 }
                 session()->flash('success','File successfully added.');
@@ -200,7 +202,7 @@ class AttendanceReportController extends Controller
             dd($ex);
         }
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -211,40 +213,33 @@ class AttendanceReportController extends Controller
         $data = AttendanceReport::all()->toJson();
         return view('importExport', $data);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function lastMonthData(){
+    public function lastMonthData($employee_id){
         $start = new \Carbon\Carbon('first day of last month');
         $end = new \Carbon\Carbon('last day of last month');
-        // $ckPreviousMonthDate = AttendanceReport::whereBetween('date', [$start->toDateString(), $end->toDateString()])->where('employee_id', 1)->get();
-        
         try{
             $seconds = 0;
             $startDate =$start->toDateString();
             $endDate = $end->toDateString();
-            $employee = 1;
-            $empDatas = AttendanceReport::where('employee_id', $employee)
-            // ->where('LE', 'NOT LIKE',  "-%")
+            $empDatas = AttendanceReport::where('employee_id', $employee_id)
             ->whereBetween('date', [$startDate, $endDate])
             ->orderBy('date', 'asc')->get();
             foreach($empDatas as $empData){
                 $empData['day'] = date('l', strtotime($empData->date));
             }
             $data[] = compact('empDatas', 'startDate', 'endDate');
-
+            // return view('emails.MonthlyReportMail',compact('empDatas','startDate','endDate'));
             \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
-
-           
         }catch(\Exception $ex){
             dd($ex);
             session()->flash('error','Error :  Something went wrong.');
             return redirect('/');
         }
-
     }
 
     /**

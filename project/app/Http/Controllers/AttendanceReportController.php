@@ -33,9 +33,17 @@ class AttendanceReportController extends Controller
                 $fileD = file($path);
 
                 $tmpFileDates = explode(',', $fileD[0]);
+                
+                $previousDate = strtotime('-1 day', strtotime($tmpFileDates[0]));
+                // check previous date file uploaded or not
+                $ckPreviousDate = AttendanceReport::where('date', date('Y-m-d', $previousDate))->count();
+                if($ckPreviousDate < 1){
+                    session()->flash('error','You have to upload '.date('d-m-Y', $previousDate).'`s file first');
+                    return redirect('/');
+                }
 
+                // check duplicate entry exist or not
                 $ckDuplicateDate = AttendanceReport::where('date', date('Y-m-d', strtotime($tmpFileDates[0])))->count();
-
                 if($ckDuplicateDate > 0){
                     session()->flash('error','Duplicate file entry.');
                     return redirect('/');
@@ -184,7 +192,7 @@ class AttendanceReportController extends Controller
                     }
                 }
                 session()->flash('success','File successfully added.');
-                return redirect('/');
+                return redirect()->back();
             }
         }catch(\Exception $ex){
             dd($ex);

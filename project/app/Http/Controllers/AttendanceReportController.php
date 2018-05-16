@@ -336,7 +336,6 @@ class AttendanceReportController extends Controller
             $employee = $request->employee;
             $employees = Employee::get();
             $empDatas = AttendanceReport::where('employee_id', $employee)
-                                        // ->where('LE', 'NOT LIKE',  "-%")
                                         ->whereBetween('date', [$startDate, $endDate])
                                         ->orderBy('date', 'asc')->get();
             foreach($empDatas as $empData){

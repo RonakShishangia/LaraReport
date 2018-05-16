@@ -141,17 +141,17 @@
         </h2>
         <table border="1">
             @php
-            $avgEntry=date('H:i:s', array_sum($tempEntryTimeArr)/count($tempEntryTimeArr));
-            $avgExit=date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr));
-            $late=date('H:i:s', array_sum($tempLateEntryTimeArr));
-            $early=date('H:i:s', array_sum($tempEarlyEntryTimeArr));
-            $break=TimeCalc::sumOfTime($tempTotalBreakTimeArr)." / ".TimeCalc::sumOfTime($officeBreakTotal);
-            $breakDiff=TimeCalc::subOfTime(TimeCalc::sumOfTime($tempTotalBreakTimeArr),TimeCalc::sumOfTime($officeBreakTotal));
-            $dutyTime=TimeCalc::sumOfTime($tempDutyTime);
-            $workedTime=TimeCalc::sumOfTime($tempTotalWorkedTimeArr);
-            $otlt=TimeCalc::subOfTime(TimeCalc::sumOfTime($tempTotalWorkedTimeArr),TimeCalc::sumOfTime($tempDutyTime));
-            $leave=count($totalLeaveArr);
-            $notThumb=count($tempNotThumb);
+                $avgEntry=date('H:i:s', array_sum($tempEntryTimeArr)/count($tempEntryTimeArr));
+                $avgExit=date('H:i:s', array_sum($tempExitTimeArr)/count($tempExitTimeArr));
+                $late=date('H:i:s', array_sum($tempLateEntryTimeArr));
+                $early=date('H:i:s', array_sum($tempEarlyEntryTimeArr));
+                $break=TimeCalc::sumOfTime($tempTotalBreakTimeArr)." / ".TimeCalc::sumOfTime($officeBreakTotal);
+                $breakDiff=TimeCalc::subOfTime(TimeCalc::sumOfTime($tempTotalBreakTimeArr),TimeCalc::sumOfTime($officeBreakTotal));
+                $dutyTime=TimeCalc::sumOfTime($tempDutyTime);
+                $workedTime=TimeCalc::sumOfTime($tempTotalWorkedTimeArr);
+                $otlt=TimeCalc::subOfTime(TimeCalc::sumOfTime($tempTotalWorkedTimeArr),TimeCalc::sumOfTime($tempDutyTime));
+                $leave=count($totalLeaveArr);
+                $notThumb=count($tempNotThumb);
             @endphp
             <thead style="background:#fcf8e3;">
                 <tr>

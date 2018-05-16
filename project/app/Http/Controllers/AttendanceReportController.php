@@ -191,7 +191,7 @@ class AttendanceReportController extends Controller
                         // send email
                         \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                         $firstDate=explode("-",$tmpLine[0]);
-                        if($firstDate[2]==01)
+                        if($firstDate[2]=="01")
                             $this->lastMonthData($employee->id);
                     }
                 }
@@ -333,7 +333,6 @@ class AttendanceReportController extends Controller
             $employee = $request->employee;
             $employees = Employee::get();
             $empDatas = AttendanceReport::where('employee_id', $employee)
-                                        // ->where('LE', 'NOT LIKE',  "-%")
                                         ->whereBetween('date', [$startDate, $endDate])
                                         ->orderBy('date', 'asc')->get();
             foreach($empDatas as $empData){

@@ -232,6 +232,7 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
         'Input' => Illuminate\Support\Facades\Input::class,
+        'TimeCalc' => App\Helpers\TimeCalc::class,
 
     ],
 

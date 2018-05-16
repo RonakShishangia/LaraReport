@@ -233,8 +233,8 @@ class AttendanceReportController extends Controller
                 $empData['day'] = date('l', strtotime($empData->date));
             }
             $data[] = compact('empDatas', 'startDate', 'endDate');
-            // return view('emails.MonthlyReportMail',compact('empDatas','startDate','endDate'));
-            \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
+            return view('emails.MonthlyReportMail',compact('empDatas','startDate','endDate'));
+            // \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
             return true;
         }catch(\Exception $ex){
             dd($ex);

@@ -191,7 +191,7 @@ class AttendanceReportController extends Controller
                         // send email
                         \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                         $firstDate=explode("-",$tmpLine[0]);
-                        if($firstDate[2]==01)
+                        if($firstDate[2]=="15")
                             $this->lastMonthData($employee->id);
                     }
                 }
@@ -232,9 +232,12 @@ class AttendanceReportController extends Controller
             foreach($empDatas as $empData){
                 $empData['day'] = date('l', strtotime($empData->date));
             }
-            $data[] = compact('empDatas', 'startDate', 'endDate');
+            if(count($empDatas) > 1){
+                $data[] = compact('empDatas', 'startDate', 'endDate');
+                \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
+            }
             // return view('emails.MonthlyReportMail',compact('empDatas','startDate','endDate'));
-            \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
+            // \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
             // return true;
         }catch(\Exception $ex){
             dd($ex);

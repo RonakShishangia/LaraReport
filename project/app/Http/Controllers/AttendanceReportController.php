@@ -191,7 +191,7 @@ class AttendanceReportController extends Controller
                         // send email
                         \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                         $firstDate=explode("-",$tmpLine[0]);
-                        if($firstDate[2]=="15")
+                        if($firstDate[2]=="01")
                             $this->lastMonthData($employee->id);
                     }
                 }

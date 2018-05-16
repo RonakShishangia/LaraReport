@@ -191,7 +191,7 @@ class AttendanceReportController extends Controller
                         // send email
                         \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                         $firstDate=explode("-",$tmpLine[0]);
-                        if($firsDate[2]==01)
+                        if($firstDate[2]==01)
                             $this->lastMonthData($employee->id);
                     }
                 }
@@ -233,9 +233,9 @@ class AttendanceReportController extends Controller
                 $empData['day'] = date('l', strtotime($empData->date));
             }
             $data[] = compact('empDatas', 'startDate', 'endDate');
-            return view('emails.MonthlyReportMail',compact('empDatas','startDate','endDate'));
-            // \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
-            return true;
+            // return view('emails.MonthlyReportMail',compact('empDatas','startDate','endDate'));
+            \Mail::to($empDatas[0]->employee->email)->send(new MonthlyReportMail($data));
+            // return true;
         }catch(\Exception $ex){
             dd($ex);
             session()->flash('error','Error :  Something went wrong.');

@@ -69,8 +69,8 @@ class AttendanceReportController extends Controller
 
                         // $thumbs[$tmpLine[2]] = rtrim($tmpLine[18], ';');
                         $tmpLineCount = count($tmpArray);
-                        $thumbs[$tmpLine[2]]['officeIn'] = reset($tmpArray);
-                        $thumbs[$tmpLine[2]]['officeOut'] = end($tmpArray);
+                        $thumbs[$tmpLine[2]]['officeIn'] = reset($tmpArray)=="" ? "00:00:00" : reset($tmpArray);
+                        $thumbs[$tmpLine[2]]['officeOut'] = end($tmpArray)=="" ? "00:00:00" :  end($tmpArray);
                         // count total time
                         $timDiff = strtotime(end($tmpArray)) - strtotime(reset($tmpArray));
                         $thumbs[$tmpLine[2]]['total_time'] =  gmdate('H:i:s', $timDiff);
@@ -189,9 +189,9 @@ class AttendanceReportController extends Controller
                         $attendanceReportDatas->not_thumb = $thumbs[$tmpLine[2]]['not_thumb'];
                         $attendanceReportDatas->save();
                         // send email
-                        \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
+                        // \Mail::to($employee->email)->send(new DailyReportMail($attendanceReportDatas));
                         $firstDate=explode("-",$tmpLine[0]);
-                        if($firstDate[2]=="15")
+                        if($firstDate[2]=="01")
                             $this->lastMonthData($employee->id);
                     }
                 }

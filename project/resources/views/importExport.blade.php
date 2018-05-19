@@ -3,8 +3,8 @@
 @section('styles')
 	<link rel="stylesheet" href="{{ asset('css/datatables.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap.min.css')}}" >
-	<link rel="stylesheet" href="{{ asset('css/responsive.bootstrap.min.css')}}" >
 	<link rel="stylesheet" href="{{ asset('css/fixedHeader.bootstrap.min.css')}}" >
+	<!-- <link rel="stylesheet" href="{{ asset('css/responsive.bootstrap.min.css')}}" > -->
 @endsection
 
 @section('content')
@@ -84,30 +84,30 @@
 
 @section('script')
 	<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
-	<script src="{{ asset('js/dataTables.bootstrap.min.js') }}"></script>
 	<script src="{{ asset('js/dataTables.fixedHeader.min.js') }}"></script>
-	<script src="{{ asset('js/dataTables.responsive.min.js') }}"></script>
-	<script src="{{ asset('js/responsive.bootstrap.min.js') }}"></script>
 	<script src="{{ asset('js/moment.min.js') }}" charset="utf-8"></script>
-	<script src="{{ asset('js/dataTables.buttons.min.js') }}"></script>
 	<script src="{{ asset('js/bootstrap-datepicker.min.js') }}" charset="utf-8"></script>
-	<script src="{{ asset('js/buttons.print.min.js') }}"></script>
-	<script src="{{ asset('js/buttons.html5.min.js') }}"></script>
-	<script src="{{ asset('js/pdfmake.min.js') }}"></script>
-	<script src="{{ asset('js/vfs_fonts.js') }}"></script>
-	<script src="{{ asset('js/jszip.min.js') }}"></script>
-	<script src="{{ asset('js/buttons.flash.min.js') }}"></script>
+	<!-- <script src="{{ asset('js/dataTables.bootstrap.min.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/dataTables.responsive.min.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/responsive.bootstrap.min.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/dataTables.buttons.min.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/buttons.print.min.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/buttons.html5.min.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/pdfmake.min.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/vfs_fonts.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/jszip.min.js') }}"></script> -->
+	<!-- <script src="{{ asset('js/buttons.flash.min.js') }}"></script> -->
 
 	<script>
 		var table='';
 		$(document).ready(function() {
 			table=$('#example').DataTable({
 				data: <?php echo $data; ?> ,
-				pageLength: 30,
-				dom: 'Bfrtip',
-				buttons: [
-					'pageLength', 'excel'//, 'csv', 'excel', 'pdf', 'print'
-				],
+				pageLength: 25,
+				// dom: 'Bfrtip',
+				// buttons: [
+				// 	'pageLength', 'excel'//, 'csv', 'excel', 'pdf', 'print'
+				// ],
 				fixedHeader: true,
 				"columns":[
 					{ data: "date", name: 'date' },
